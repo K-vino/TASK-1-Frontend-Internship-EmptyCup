@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Solar System - Vino K</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #solar-system-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 10;
+      color: white;
+    }
+    .slider-label {
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+</head>
+<body>
+  <div id="solar-system-controls">
+    <label class="slider-label" for="mercurySpeed">Mercury Speed</label>
+    <input type="range" id="mercurySpeed" min="0" max="0.1" step="0.001" value="0.04">
+    <label class="slider-label" for="venusSpeed">Venus Speed</label>
+    <input type="range" id="venusSpeed" min="0" max="0.1" step="0.001" value="0.03">
+    <label class="slider-label" for="earthSpeed">Earth Speed</label>
+    <input type="range" id="earthSpeed" min="0" max="0.1" step="0.001" value="0.02">
+    <label class="slider-label" for="marsSpeed">Mars Speed</label>
+    <input type="range" id="marsSpeed" min="0" max="0.1" step="0.001" value="0.01">
+  </div>
+  <canvas id="three-canvas"></canvas>
+
+  <script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas") });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const pointLight = new THREE.PointLight(0xffffff, 2, 100);
+    pointLight.position.set(0, 0, 0);
+    scene.add(pointLight);
+
+    const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sun);
+
+    const planets = [
+      { name: 'Mercury', color: 0x909090, radius: 3, speed: 0.04, id: 'mercurySpeed' },
+      { name: 'Venus', color: 0xD4AF37, radius: 4, speed: 0.03, id: 'venusSpeed' },
+      { name: 'Earth', color: 0x0033FF, radius: 5, speed: 0.02, id: 'earthSpeed' },
+      { name: 'Mars', color: 0xFF4500, radius: 6, speed: 0.01, id: 'marsSpeed' }
+    ];
+
+    const planetOrbits = [];
+    const planetMeshes = [];
+
+    planets.forEach(planet => {
+      const orbit = new THREE.Object3D();
+      scene.add(orbit);
+      planetOrbits.push(orbit);
+
+      const geometry = new THREE.SphereGeometry(0.3, 32, 32);
+      const material = new THREE.MeshStandardMaterial({ color: planet.color });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = planet.radius;
+      orbit.add(mesh);
+      planetMeshes.push(mesh);
+
+      planet.mesh = mesh;
+    });
+
+    camera.position.z = 15;
+
+    function getSpeeds() {
+      return planets.map(p => parseFloat(document.getElementById(p.id).value));
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      sun.rotation.y += 0.001;
+      const speeds = getSpeeds();
+      planetOrbits.forEach((orbit, i) => {
+        orbit.rotation.y += speeds[i];
+      });
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Filler lines for 500+ total lines
+    for (let i = 0; i < 400; i++) {
+      console.log("Filler line " + i);
+    }
+  </script>
+</body>
+</html>

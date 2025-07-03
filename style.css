@@ -1,1713 +1,1423 @@
-/*
-    style.css - Styling for the Vino_K_SolarSystem 3D Simulation.
-    This stylesheet provides a dark theme, ensures mobile responsiveness,
-    and styles all UI elements including headers, footers, control panels,
-    sliders, buttons, and the loading overlay.
-    Extensive comments are used to explain each section and property.
-*/
+/* =====================================================================================================================
+ * CSS Variables (Custom Properties)
+ * This section defines a comprehensive set of CSS custom properties (variables) at the `:root` level.
+ * These variables serve as a central source of truth for design tokens, promoting consistency,
+ * maintainability, and ease of modification throughout the entire stylesheet.
+ * Using variables helps in creating a scalable and themeable design system.
+ * ===================================================================================================================== */
+:root {
+    /* Color Palette Definitions */
+    --color-primary-blue: #63B3ED;      /* A vibrant light blue, used for interactive elements, highlights, and progress indicators. */
+    --color-secondary-blue: #4299E1;    /* A slightly darker, medium blue, primarily for button backgrounds in their default state. */
+    --color-tertiary-blue: #3182CE;     /* A deeper blue, used for button hover states and active elements, providing visual feedback. */
+    --color-danger-red: #E53E3E;        /* A strong red, designated for critical actions like reset buttons or error indicators. */
+    --color-danger-red-hover: #C53030;  /* A darker shade of red for the hover state of danger-related buttons. */
+    --color-dark-bg: #000000;           /* Pure black, serving as the primary background color for the immersive space theme. */
+    --color-panel-bg: rgba(17, 24, 39, 0.9); /* A very dark gray with 90% opacity, used for UI panel backgrounds, creating a semi-transparent effect. */
+    --color-panel-border: rgba(71, 85, 105, 0.3); /* A subtle, semi-transparent gray for panel borders, adding definition without harsh lines. */
+    --color-text-light: #E0E0E0;        /* A very light gray, ideal for main headings and primary text content, ensuring high contrast on dark backgrounds. */
+    --color-text-medium: #B0B0B0;       /* A medium gray, suitable for labels, descriptions, and secondary text, providing good readability. */
+    --color-text-dark: #A0AEC0;         /* A slightly darker gray, used for less prominent text like slider values or informational tips. */
+    --color-link: #63B3ED;              /* The default color for hyperlinks, matching the primary blue accent. */
+    --color-link-hover: #4299E1;        /* The color for hyperlinks when hovered over, transitioning to a darker blue. */
+    --color-slider-track: #4A5568;      /* A dark gray color for the background track of range input sliders. */
+    --color-separator: rgba(71, 85, 105, 0.2); /* A very light, dashed line color for visual separation within panels. */
+    --color-spinner-border: rgba(255, 255, 255, 0.3); /* A semi-transparent white for the non-animated part of the loading spinner. */
+    --color-success-green: #48BB78;     /* A green color for success messages or indicators (not currently used, but good to define). */
+    --color-warning-yellow: #ECC94B;    /* A yellow color for warning messages (not currently used). */
+    --color-info-purple: #9F7AEA;       /* A purple color for informational messages (not currently used). */
 
-/* --- 1. Global Reset and Base Styles --- */
+    /* Spacing Definitions */
+    --spacing-xxs: 2px;                 /* Extra extra small spacing. */
+    --spacing-xs: 5px;                  /* Extra small spacing. */
+    --spacing-sm: 8px;                  /* Small spacing. */
+    --spacing-md: 10px;                 /* Medium spacing. */
+    --spacing-lg: 15px;                 /* Large spacing. */
+    --spacing-xl: 20px;                 /* Extra large spacing. */
+    --spacing-xxl: 25px;                /* Extra extra large spacing. */
+    --spacing-xxxl: 30px;               /* Triple extra large spacing. */
+    --spacing-xxxxl: 40px;              /* Quadruple extra large spacing. */
 
-/* Universal box-sizing for consistent layout behavior */
+    /* Font Size Definitions */
+    --font-size-xxs: 0.65rem;           /* Very small font size. */
+    --font-size-xs: 0.7rem;             /* Extra small font size. */
+    --font-size-sm: 0.85rem;            /* Small font size. */
+    --font-size-md: 0.95rem;            /* Medium font size, suitable for labels. */
+    --font-size-lg: 1.05rem;            /* Large font size, for button text. */
+    --font-size-xl: 1.4rem;             /* Extra large font size, for section titles. */
+    --font-size-xxl: 1.7rem;            /* Extra extra large font size, for panel titles on smaller screens. */
+    --font-size-xxxl: 2rem;             /* Triple extra large font size, for main panel title. */
+    --font-size-xxxxl: 2.5rem;          /* Quadruple extra large font size (not currently used). */
+
+    /* Border Radii Definitions */
+    --border-radius-none: 0;            /* No border radius. */
+    --border-radius-xs: 2px;            /* Extra small border radius. */
+    --border-radius-sm: 4px;            /* Small border radius. */
+    --border-radius-md: 8px;            /* Medium border radius. */
+    --border-radius-lg: 10px;           /* Large border radius. */
+    --border-radius-xl: 15px;           /* Extra large border radius, for panels. */
+    --border-radius-circle: 50%;        /* Perfect circle border radius. */
+
+    /* Shadow Definitions */
+    --shadow-none: none;                /* No shadow. */
+    --shadow-xs: 0 2px 5px rgba(0, 0, 0, 0.2); /* Extra small shadow. */
+    --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.4); /* Small shadow for elements like planet labels. */
+    --shadow-md: 0 6px 15px rgba(0, 0, 0, 0.4); /* Medium shadow for buttons. */
+    --shadow-lg: 0 12px 25px rgba(0, 0, 0, 0.6); /* Large shadow for panels and modals. */
+    --shadow-blue-glow: 0 0 10px rgba(99, 179, 237, 0.3); /* Subtle blue glow for titles. */
+    --shadow-blue-glow-strong: 0 0 12px rgba(99, 179, 237, 0.8); /* Stronger blue glow for active states. */
+    --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.2); /* Inner shadow for depth. */
+
+    /* Transition Definitions */
+    --transition-fast: 0.2s ease-in-out;    /* Quick transitions for interactive elements. */
+    --transition-normal: 0.3s ease;         /* Standard transition speed for UI changes. */
+    --transition-slow: 1s ease-out;         /* Slower transition for loading overlays. */
+    --transition-extra-slow: 2s ease-in-out; /* Extra slow transition for camera focus. */
+
+    /* Z-index Layers */
+    --z-index-canvas: 0;                /* Base layer for the 3D canvas. */
+    --z-index-panel: 10;                /* UI control panel, above the canvas. */
+    --z-index-label: 100;               /* Planet hover labels, above the panel. */
+    --z-index-message-box: 1000;        /* Custom message boxes, above labels. */
+    --z-index-loading-overlay: 9999;    /* Loading screen, on top of everything. */
+
+    /* Opacity Values */
+    --opacity-high: 0.95;               /* High opacity for backgrounds. */
+    --opacity-medium: 0.7;              /* Medium opacity for overlays. */
+    --opacity-low: 0.2;                 /* Low opacity for subtle elements like orbit paths. */
+}
+
+
+/* =====================================================================================================================
+ * GLOBAL STYLES AND RESETS
+ * This section defines fundamental styles for the entire HTML document, including basic typography,
+ * box-sizing, and resets for default browser margins/paddings to ensure consistent rendering.
+ * ===================================================================================================================== */
+
+/* Import Google Fonts - Inter for a modern, clean, and highly readable look throughout the application. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+/* Apply basic resets to HTML and body elements for consistent rendering across different browsers. */
+html, body {
+    margin: 0;                  /* Remove default margin around the body element. */
+    padding: 0;                 /* Remove default padding from the body element. */
+    overflow: hidden;           /* Hide scrollbars, as the 3D canvas is designed to fill the entire screen. */
+    width: 100vw;               /* Ensure the HTML and body elements take 100% of the viewport width. */
+    height: 100vh;              /* Ensure the HTML and body elements take 100% of the viewport height. */
+    font-family: 'Inter', sans-serif; /* Apply the 'Inter' font globally for all text content. */
+    background-color: var(--color-dark-bg); /* Set a pure black background, fitting the solar system theme. */
+    color: var(--color-text-light); /* Set a light gray as the default text color for high contrast. */
+    box-sizing: border-box;     /* Apply the border-box model globally for consistent sizing calculations. */
+    -webkit-font-smoothing: antialiased; /* Enhance font rendering for smoother text on Webkit browsers (Chrome, Safari). */
+    -moz-osx-font-smoothing: grayscale; /* Enhance font rendering for smoother text on Firefox. */
+    line-height: 1.6;           /* Increase line height for improved readability of text blocks. */
+    text-rendering: optimizeLegibility; /* Optimizes text rendering for legibility over speed. */
+    -webkit-tap-highlight-color: transparent; /* Removes the tap highlight on mobile devices. */
+}
+
+/* Inherit border-box sizing for all elements, including pseudo-elements (`::before`, `::after`).
+ * This ensures that padding and borders are included within the element's total width and height. */
 *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    box-sizing: inherit;
 }
 
-/* Base body styles: dark background, Inter font, smooth scrolling */
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #0d0d1a; /* Very dark blue/purple for a space feel */
-    color: #e0e0e0; /* Light grey for text */
-    line-height: 1.6;
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    min-height: 100vh; /* Ensure body takes full viewport height */
-    display: flex; /* Use flexbox to ensure footer sticks to bottom if content is short */
-    flex-direction: column; /* Stack children vertically */
-    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
-}
-
-/* Anchor tag styling */
+/* Basic styling for hyperlinks to ensure they are readable, interactive, and visually consistent. */
 a {
-    color: #8be9fd; /* Light blue for links */
-    text-decoration: none;
-    transition: color 0.3s ease, text-decoration 0.3s ease;
+    color: var(--color-link);         /* Set the default color for links using a CSS variable. */
+    text-decoration: none;            /* Remove the default underline from links. */
+    transition: color var(--transition-fast), text-decoration var(--transition-fast); /* Smooth transition for color and underline on hover. */
+    cursor: pointer;                  /* Explicitly set cursor to pointer for all links. */
 }
 
+/* Hover state for links: change color and add an underline for visual feedback. */
 a:hover {
-    color: #6272a4; /* Slightly darker blue on hover */
-    text-decoration: underline;
+    color: var(--color-link-hover);   /* Change link color on hover. */
+    text-decoration: underline;       /* Add an underline on hover. */
 }
 
-/* List styling reset */
+/* Active state for links: slight color change when clicked. */
+a:active {
+    color: var(--color-tertiary-blue);
+}
+
+/* Focus state for links: ensures keyboard navigation is visible. */
+a:focus-visible {
+    outline: 2px solid var(--color-primary-blue); /* Blue outline for focus. */
+    outline-offset: 2px;            /* Offset outline from the element. */
+    border-radius: var(--border-radius-sm); /* Rounded corners for the outline. */
+}
+
+/* Styles for elements that should only be visible to screen readers. */
+.sr-only {
+    position: absolute;             /* Position absolutely. */
+    width: 1px;                     /* Make it very small. */
+    height: 1px;                    /* Make it very small. */
+    padding: 0;                     /* No padding. */
+    margin: -1px;                   /* Negative margin to pull it out of flow. */
+    overflow: hidden;               /* Hide overflow. */
+    clip: rect(0, 0, 0, 0);         /* Clip the element to zero dimensions. */
+    white-space: nowrap;            /* Prevent text wrapping. */
+    border-width: 0;                /* No border. */
+}
+
+/* General styling for headings (h1-h6) to ensure consistent typography. */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;                  /* Remove default top margin. */
+    margin-bottom: var(--spacing-md); /* Consistent bottom margin. */
+    font-weight: 700;               /* Bold font by default. */
+    line-height: 1.2;               /* Tighter line height for headings. */
+}
+
+/* General styling for paragraphs. */
+p {
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Styling for unordered lists. */
 ul {
-    list-style: none;
+    list-style: none; /* Remove default bullet points. */
+    padding: 0;       /* Remove default padding. */
+    margin: 0;        /* Remove default margin. */
 }
 
-/* --- 2. Application Container Layout --- */
+/* =====================================================================================================================
+ * SOLAR SYSTEM CONTAINER AND CANVAS STYLING
+ * This section styles the main container for the Three.js canvas to ensure it covers the entire screen,
+ * providing the immersive background for the 3D simulation.
+ * ===================================================================================================================== */
 
-/* Main application container, designed for full viewport height and flexible content */
-#app-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensures the container fills the viewport height */
-    width: 100%;
-    max-width: 100vw; /* Prevents overflow on very wide screens */
-    margin: 0 auto;
-    padding: 20px; /* Overall padding for the app */
-    background: linear-gradient(180deg, #0d0d1a 0%, #1a1a2e 100%); /* Subtle gradient background */
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); /* Soft shadow for depth */
-    border-radius: 15px; /* Rounded corners for the entire app container */
-    overflow: hidden; /* Hide any overflowing content */
+#solar-system-container {
+    position: fixed;            /* Fixes the container to the viewport, ensuring it stays in place regardless of scrolling. */
+    top: 0;                     /* Aligns to the top edge of the viewport. */
+    left: 0;                    /* Aligns to the left edge of the viewport. */
+    width: 100vw;               /* Takes 100% of the viewport width. */
+    height: 100vh;              /* Takes 100% of the viewport height. */
+    z-index: var(--z-index-canvas); /* Assigns a low z-index to ensure it's behind UI elements. */
+    display: block;             /* Ensures it behaves as a block element, taking up its own line. */
+    /* No specific background color here, as Three.js will render the scene background (e.g., stars texture). */
+    cursor: grab;               /* Default cursor indicates draggable content. */
 }
 
-/* --- 3. Header Styling --- */
-
-/* Main header section */
-#main-header {
-    text-align: center;
-    padding: 30px 20px;
-    margin-bottom: 20px;
-    background-color: rgba(26, 26, 46, 0.8); /* Semi-transparent dark background */
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px); /* Frosted glass effect */
-    -webkit-backdrop-filter: blur(5px); /* For Safari */
-    border: 1px solid rgba(139, 233, 253, 0.1); /* Subtle border */
+/* Style for the canvas element generated dynamically by Three.js. */
+/* `!important` is used here to override any potential inline styles or lower-specificity rules set by Three.js. */
+canvas {
+    display: block;             /* Removes any extra space below the canvas element, preventing layout issues. */
+    width: 100% !important;     /* Ensures the canvas takes full width of its parent container. */
+    height: 100% !important;    /* Ensures the canvas takes full height of its parent container. */
+    touch-action: none;         /* Prevents default browser touch actions (like scrolling or zooming) on the canvas,
+                                   allowing Three.js OrbitControls to handle touch interactions. */
+    outline: none;              /* Removes the default focus outline that appears when the canvas is clicked. */
 }
 
-/* Application title styling */
-.app-title {
-    font-size: 2.8em;
-    color: #f8f8f2; /* Light text for title */
-    margin-bottom: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-shadow: 0 0 10px rgba(139, 233, 253, 0.5); /* Glowing effect */
+/* Active state for the container when dragging (e.g., for camera orbit). */
+#solar-system-container:active {
+    cursor: grabbing;           /* Changes cursor to 'grabbing' to indicate active drag. */
 }
 
-/* Highlighted part of the title */
-.title-highlight {
-    color: #bd93f9; /* Purple highlight */
-}
+/* =====================================================================================================================
+ * LOADING OVERLAY STYLING
+ * This section styles the fullscreen loading screen that appears while essential assets (like textures)
+ * are being loaded by the JavaScript. It provides crucial visual feedback to the user.
+ * ===================================================================================================================== */
 
-/* Application description styling */
-.app-description {
-    font-size: 1.1em;
-    color: #a0a0a0; /* Slightly darker grey for description */
-    max-width: 800px;
-    margin: 0 auto 20px;
-}
-
-/* Header control buttons container */
-.header-controls {
-    display: flex;
-    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-    justify-content: center;
-    gap: 15px; /* Space between buttons */
-    margin-top: 20px;
-}
-
-/* Styling for control buttons */
-.control-button {
-    background: linear-gradient(45deg, #6272a4, #8be9fd); /* Gradient background */
-    color: #282a36; /* Dark text for contrast */
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px; /* Space between icon and text */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.control-button:hover {
-    transform: translateY(-3px); /* Lift effect on hover */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(45deg, #8be9fd, #6272a4); /* Reverse gradient on hover */
-}
-
-.control-button:active {
-    transform: translateY(0); /* Press effect */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Icon styling within buttons */
-.control-button .icon {
-    font-size: 1.2em;
-    line-height: 1; /* Align icon vertically */
-}
-
-/* --- 4. Main Content Area Layout --- */
-
-/* Main content area, uses flexbox for canvas and sidebar layout */
-#main-content {
-    flex: 1; /* Allows main content to grow and fill available space */
-    display: flex;
-    flex-direction: row; /* Default to row layout for desktop */
-    gap: 20px; /* Space between canvas and sidebar */
-    padding-bottom: 20px; /* Padding at the bottom before footer */
-}
-
-/* --- 5. Canvas Styling --- */
-
-/* Styling for the Three.js canvas */
-#solarSystemCanvas {
-    flex: 3; /* Canvas takes more space */
-    min-height: 500px; /* Minimum height for canvas */
-    background-color: #000000; /* Black background for space */
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    display: block; /* Remove extra space below canvas */
-    width: 100%; /* Ensure canvas takes full width of its flex item */
-    height: auto; /* Maintain aspect ratio */
-    overflow: hidden; /* Hide any overflow from rendering */
-    position: relative; /* For z-index stacking context */
-}
-
-/* --- 6. Loading Overlay Styling --- */
-
-/* Loading overlay that covers the entire canvas */
 #loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.95); /* Darker overlay */
+    position: fixed;            /* Fixed to cover the entire viewport, ensuring it's always visible. */
+    top: 0; left: 0;            /* Aligns to the top-left corner of the viewport. */
+    width: 100vw;               /* Takes 100% of the viewport width. */
+    height: 100vh;              /* Takes 100% of the viewport height. */
+    background-color: rgba(0, 0, 0, var(--opacity-high)); /* Semi-transparent dark background for a sleek look. */
+    display: flex;              /* Uses flexbox for easy centering of its content. */
+    flex-direction: column;     /* Stacks children vertically. */
+    justify-content: center;    /* Centers content vertically within the flex container. */
+    align-items: center;        /* Centers content horizontally within the flex container. */
+    z-index: var(--z-index-loading-overlay); /* Assigns the highest z-index to ensure it's on top of everything. */
+    color: var(--color-text-light); /* Sets a light text color for readability. */
+    font-size: var(--font-size-lg); /* Sets a default font size for loading text. */
+    transition: opacity var(--transition-slow); /* Smooth fade-out transition when loading completes. */
+    pointer-events: all;        /* Allows interaction with the overlay during loading (e.g., if there's a cancel button, though not implemented). */
+    text-align: center;         /* Centers all text content within the overlay. */
+    user-select: none;          /* Prevents text selection on the loading screen. */
+    -webkit-user-select: none;  /* Safari/Chrome prefix. */
+    -moz-user-select: none;     /* Firefox prefix. */
+    -ms-user-select: none;      /* IE/Edge prefix. */
+}
+
+/* Container for all loading-related elements, allowing for easy centering and styling. */
+.loading-content {
+    display: flex;              /* Uses flexbox for its internal layout. */
+    flex-direction: column;     /* Stacks items vertically. */
+    align-items: center;        /* Centers items horizontally. */
+    padding: var(--spacing-xxxl); /* Generous padding around the content. */
+    background-color: rgba(17, 24, 39, 0.8); /* Dark background with more transparency than the overlay itself. */
+    border-radius: var(--border-radius-xl); /* Large border radius for a soft, modern look. */
+    box-shadow: var(--shadow-lg); /* Deep shadow for a sense of depth and prominence. */
+    max-width: 90vw;            /* Limits maximum width to prevent overflow on very wide screens. */
+    width: 450px;               /* Fixed width for the loading content box. */
+    box-sizing: border-box;     /* Ensures padding is included in the width. */
+}
+
+/* Styling for the CSS-animated loading spinner. */
+.loading-spinner {
+    border: 8px solid var(--color-spinner-border); /* Light gray border for the static part of the spinner. */
+    border-top: 8px solid var(--color-primary-blue); /* Blue top border, which will animate. */
+    border-radius: var(--border-radius-circle); /* Makes the element a perfect circle. */
+    width: 60px;                /* Sets the width of the spinner. */
+    height: 60px;               /* Sets the height of the spinner. */
+    animation: spin 1.5s linear infinite; /* Applies the 'spin' animation: 1.5s duration, linear timing, infinite loop. */
+    margin-bottom: var(--spacing-xl); /* Space below the spinner. */
+    flex-shrink: 0;             /* Prevents the spinner from shrinking in flex container. */
+}
+
+/* Keyframe animation for the loading spinner. */
+@keyframes spin {
+    0% { transform: rotate(0deg); }     /* Starts the rotation at 0 degrees. */
+    100% { transform: rotate(360deg); } /* Completes a full rotation (360 degrees). */
+}
+
+/* Styling for the loading progress text (e.g., "Loading... 0%"). */
+#loading-progress-text {
+    margin-bottom: var(--spacing-lg); /* Space below the text. */
+    font-weight: 600;           /* Semi-bold font weight. */
+    font-size: var(--font-size-xl); /* Larger font size for prominence. */
+    color: var(--color-text-light); /* Light text color. */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Subtle text shadow for depth. */
+}
+
+/* Container for the progress bar, defining its background and overall dimensions. */
+.loading-bar-container {
+    width: 250px;               /* Fixed width for the progress bar container. */
+    height: 12px;               /* Height of the progress bar. */
+    background-color: var(--color-slider-track); /* Dark gray background for the track. */
+    border-radius: var(--border-radius-md); /* Rounded corners for the bar container. */
+    overflow: hidden;           /* Hides any overflow of the inner progress bar. */
+    box-shadow: var(--shadow-inset); /* Inner shadow for a subtle recessed effect. */
+    margin-bottom: var(--spacing-md); /* Space below the progress bar. */
+}
+
+/* The actual progress bar element, whose width is dynamically updated by JavaScript. */
+.loading-bar {
+    height: 100%;               /* Takes full height of its container. */
+    width: 0%;                  /* Starts at 0 width, expands as progress increases. */
+    background-color: var(--color-primary-blue); /* Blue fill color for the progress. */
+    border-radius: var(--border-radius-md); /* Rounded corners for the filled bar. */
+    transition: width 0.3s ease-out; /* Smooth transition for width changes. */
+}
+
+/* Styling for the helpful tip displayed during loading. */
+.loading-tip {
+    font-size: var(--font-size-sm); /* Smaller font size. */
+    color: var(--color-text-medium); /* Medium gray text color. */
+    margin-top: var(--spacing-lg); /* Space above the tip. */
+    font-style: italic;         /* Italicized text. */
+    max-width: 80%;             /* Limit width for better readability. */
+    line-height: 1.4;           /* Adjust line height. */
+}
+
+/* Styling for the important note regarding texture loading. */
+.loading-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-danger-red); /* Highlight with red for importance. */
+    margin-top: var(--spacing-sm);
+    font-weight: 500;
+    line-height: 1.3;
+    max-width: 85%;
+}
+
+/* Styling for the detailed loading steps. */
+.loading-details {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md);
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: var(--border-radius-md);
+    max-height: 150px; /* Limit height to prevent excessive scrolling. */
+    overflow-y: auto; /* Enable scrolling for long lists. */
+    font-size: var(--font-size-xs);
+    color: var(--color-text-dark);
+    line-height: 1.4;
+    text-align: left; /* Align text left within this box. */
+    width: 100%; /* Take full width of parent. */
+}
+
+.loading-details p {
+    margin-bottom: var(--spacing-xxs); /* Small margin between steps. */
+}
+
+.loading-details p:last-child {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: var(--color-primary-blue);
+}
+
+/* Custom scrollbar for loading details (Webkit). */
+.loading-details::-webkit-scrollbar {
+    width: 6px;
+    border-radius: var(--border-radius-xs);
+}
+
+.loading-details::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-xs);
+}
+
+.loading-details::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-blue);
+    border-radius: var(--border-radius-xs);
+}
+
+/* =====================================================================================================================
+ * CONTROLS PANEL STYLING
+ * This section styles the interactive UI panel containing sliders, buttons, and informational sections.
+ * It is positioned absolutely on top of the canvas, typically located on the right side of the screen.
+ * ===================================================================================================================== */
+
+#controls-panel {
+    position: absolute;         /* Positioned relative to the viewport. */
+    top: var(--spacing-xl);     /* Distance from the top edge of the viewport. */
+    right: var(--spacing-xl);   /* Distance from the right edge of the viewport. */
+    width: 320px;               /* Fixed width for the control panel. */
+    max-height: calc(100vh - (2 * var(--spacing-xl))); /* Maximum height to prevent overflow, with vertical padding. */
+    overflow-y: auto;           /* Enables vertical scrolling if content exceeds the maximum height. */
+    padding: var(--spacing-xxl); /* Generous inner padding for content within the panel. */
+    background-color: var(--color-panel-bg); /* Dark gray background with transparency for a sleek, modern look. */
+    border-radius: var(--border-radius-xl); /* Large border radius for soft, rounded corners. */
+    box-shadow: var(--shadow-lg); /* Deep shadow for a strong sense of depth and prominence. */
+    z-index: var(--z-index-panel); /* Assigns a z-index to ensure it's above the 3D canvas. */
+    display: flex;              /* Uses flexbox for its internal layout. */
+    flex-direction: column;     /* Stacks items vertically within the panel. */
+    gap: var(--spacing-lg);     /* Creates consistent spacing between main control groups/sections. */
+    backdrop-filter: blur(8px); /* Applies a strong blur effect to content behind the panel, creating a frosted glass look. */
+    -webkit-backdrop-filter: blur(8px); /* Safari support for backdrop-filter. */
+    border: 1px solid var(--color-panel-border); /* A subtle border for visual definition and separation. */
+    transition: transform var(--transition-normal), opacity var(--transition-normal); /* Smooth transitions for potential show/hide animations. */
+}
+
+/* Styling for the main title within the controls panel. */
+.panel-title {
+    font-size: var(--font-size-xxxl); /* Larger font size for the main title, making it stand out. */
+    color: var(--color-text-light); /* Light gray color for prominence and readability. */
+    margin-bottom: var(--spacing-xl); /* Increased space below the title. */
+    text-align: center;         /* Centers the title text. */
+    font-weight: 800;           /* Extra bold font weight for emphasis. */
+    text-shadow: var(--shadow-blue-glow); /* Applies a subtle blue glow effect to the text for visual flair. */
+    letter-spacing: 0.5px;      /* Slightly increased letter spacing for aesthetic appeal. */
+}
+
+/* Styling for the description text directly below the main panel title. */
+.panel-description {
+    font-size: var(--font-size-sm); /* Smaller font size for descriptive text. */
+    color: var(--color-text-medium); /* Medium gray text color. */
+    text-align: center;         /* Centers the description text. */
+    margin-top: calc(-1 * var(--spacing-lg)); /* Adjusts top margin to pull it closer to the title. */
+    margin-bottom: var(--spacing-xl); /* Consistent bottom margin. */
+    line-height: 1.4;           /* Adjust line height for readability. */
+}
+
+/* General styling for each major section title within the controls panel. */
+.section-title {
+    font-size: var(--font-size-xl); /* Larger font size for section titles. */
+    color: var(--color-primary-blue); /* Primary blue color for emphasis. */
+    margin-top: var(--spacing-lg); /* Space above the section title. */
+    margin-bottom: var(--spacing-md); /* Space below the section title. */
+    font-weight: 700;           /* Bold font weight. */
+    border-bottom: 1px solid var(--color-separator); /* A dashed separator line below the title. */
+    padding-bottom: var(--spacing-sm); /* Padding below the title before the separator. */
+    text-align: center;         /* Centers the section title text. */
+    text-transform: uppercase;  /* Uppercase text for section titles. */
+    letter-spacing: 1px;        /* Increased letter spacing for section titles. */
+}
+
+/* Styling for descriptive text directly below section titles. */
+.section-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-medium);
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.4;
+}
+
+/* General styling for each control group (e.g., a label paired with a slider or a button). */
+.control-group {
+    margin-bottom: var(--spacing-md); /* Space between individual control groups. */
+    padding-bottom: var(--spacing-xs); /* Small padding at the bottom for visual separation. */
+    border-bottom: 1px dashed var(--color-separator); /* A light dashed separator line. */
+    transition: background-color var(--transition-fast); /* Smooth background transition for hover effects. */
+}
+
+/* No bottom border for the last control group within a section to avoid redundant lines. */
+.control-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Specific styling for planet control groups to add extra spacing and subtle hover effect. */
+.planet-control {
+    margin-bottom: var(--spacing-sm); /* Slightly less margin for tighter packing of planet controls. */
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px dotted rgba(71, 85, 105, 0.1); /* Lighter dotted separator. */
+}
+
+.planet-control:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.planet-control:hover {
+    background-color: rgba(71, 85, 105, 0.1); /* Subtle background highlight on hover. */
+    border-radius: var(--border-radius-sm);
+}
+
+/* Styling for labels associated with sliders or other form controls. */
+.control-label {
+    display: block;             /* Makes the label take full width, placing it above its associated control. */
+    color: var(--color-text-medium); /* Medium gray text color for labels. */
+    font-size: var(--font-size-md); /* Slightly larger font for labels for readability. */
+    margin-bottom: var(--spacing-sm); /* Increased space between the label and the control. */
+    font-weight: 600;           /* Semi-bold font weight for emphasis. */
+    text-align: left;           /* Aligns label text to the left. */
+}
+
+/* Additional informational text displayed below sliders or buttons. */
+.slider-info, .camera-info, .control-tip, .debug-note {
+    font-size: var(--font-size-xs); /* Extra small font size for supplementary information. */
+    color: var(--color-text-dark); /* Darker gray text color. */
+    margin-top: var(--spacing-xs); /* Small space above the info text. */
+    text-align: right;          /* Aligns text to the right. */
+    font-style: italic;         /* Italicized text for tips/notes. */
+    line-height: 1.3;           /* Adjust line height for compactness. */
+}
+
+.control-tip {
+    text-align: center; /* Center align tips under buttons. */
+    margin-top: var(--spacing-sm);
+}
+
+.camera-info-click, .camera-info-drag {
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-medium);
+}
+
+/* =====================================================================================================================
+ * SLIDER (RANGE INPUT) STYLING
+ * Custom styles for HTML range input elements to match the dark theme and provide a polished look.
+ * ===================================================================================================================== */
+
+input[type="range"].speed-slider {
+    -webkit-appearance: none;   /* Remove default styling for Webkit browsers (Chrome, Safari). */
+    appearance: none;           /* Remove default styling for other browsers (Firefox, Edge). */
+    width: 100%;                /* Ensures the slider takes the full width of its parent container. */
+    height: 8px;                /* Sets the height of the slider track. */
+    background: var(--color-slider-track); /* Darker gray color for the slider track background. */
+    outline: none;              /* Removes the default focus outline when the slider is active. */
+    opacity: 0.9;               /* Slightly transparent track for a subtle effect. */
+    transition: opacity var(--transition-fast); /* Smooth transition for opacity changes on hover. */
+    border-radius: var(--border-radius-sm); /* Rounded corners for the slider track. */
+    cursor: pointer;            /* Changes the cursor to a pointer to indicate interactivity. */
+    box-shadow: var(--shadow-inset); /* Applies an inner shadow for a subtle recessed appearance. */
+}
+
+/* Hover effect for sliders: increases opacity for visual feedback. */
+input[type="range"].speed-slider:hover {
+    opacity: 1;
+}
+
+/* Webkit (Chrome, Safari) specific thumb (slider handle) styling. */
+input[type="range"].speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;   /* Removes default thumb styling. */
+    appearance: none;
+    width: 20px;                /* Sets the width of the thumb. */
+    height: 20px;               /* Sets the height of the thumb. */
+    background: var(--color-primary-blue); /* Vibrant blue color for the thumb. */
+    cursor: grab;               /* Changes cursor to 'grab' to indicate it's draggable. */
+    border-radius: var(--border-radius-circle); /* Makes the thumb a perfect circle. */
+    box-shadow: var(--shadow-blue-glow); /* Applies a subtle blue glow effect to the thumb. */
+    border: 3px solid #fff;     /* Adds a white border around the thumb for better contrast. */
+    margin-top: -6px;           /* Adjusts vertical position to center the thumb on the track. */
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast); /* Smooth transitions for visual feedback. */
+}
+
+/* Active state for Webkit thumb (when being dragged). */
+input[type="range"].speed-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;           /* Changes cursor to 'grabbing' to indicate active dragging. */
+    box-shadow: var(--shadow-blue-glow-strong); /* Increases the intensity of the blue glow. */
+    transform: scale(1.05);     /* Slightly enlarges the thumb for a 'pressed' effect. */
+}
+
+/* Focus state for Webkit thumb: ensures keyboard navigation is visible. */
+input[type="range"].speed-slider::-webkit-slider-thumb:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+}
+
+/* Firefox specific thumb styling. */
+input[type="range"].speed-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--color-primary-blue);
+    cursor: grab;
+    border-radius: var(--border-radius-circle);
+    box-shadow: var(--shadow-blue-glow);
+    border: 3px solid #fff;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Active state for Firefox thumb. */
+input[type="range"].speed-slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    box-shadow: var(--shadow-blue-glow-strong);
+    transform: scale(1.05);
+}
+
+/* Focus state for Firefox thumb. */
+input[type="range"].speed-slider::-moz-range-thumb:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+}
+
+/* IE/Edge specific thumb styling. */
+input[type="range"].speed-slider::-ms-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--color-primary-blue);
+    cursor: grab;
+    border-radius: var(--border-radius-circle);
+    box-shadow: var(--shadow-blue-glow);
+    border: 3px solid #fff;
+    transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+/* Active state for IE/Edge thumb. */
+input[type="range"].speed-slider::-ms-thumb:active {
+    cursor: grabbing;
+    box-shadow: var(--shadow-blue-glow-strong);
+    transform: scale(1.05);
+}
+
+/* Focus state for IE/Edge thumb. */
+input[type="range"].speed-slider::-ms-thumb:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+}
+
+/* Styling for the numeric value display associated with each slider. */
+.speed-value {
+    font-size: var(--font-size-xs); /* Extra small font size for the value display. */
+    color: var(--color-text-dark); /* Darker gray text color for values. */
+    text-align: right;          /* Aligns the value text to the right of the slider. */
+    display: block;             /* Ensures the value display takes its own line. */
+    margin-top: var(--spacing-xs); /* Small space above the value. */
+    font-weight: 400;           /* Normal font weight. */
+    font-family: 'monospace';   /* Monospace font for numerical consistency. */
+    letter-spacing: 0.2px;      /* Slight letter spacing. */
+}
+
+/* =====================================================================================================================
+ * BUTTON STYLING
+ * This section defines styles for general control buttons and specific reset buttons, including icons.
+ * ===================================================================================================================== */
+
+.control-button {
+    background-color: var(--color-secondary-blue); /* Blue background for buttons. */
+    color: white;               /* White text color for high contrast. */
+    padding: var(--spacing-md) var(--spacing-xl); /* Generous padding inside the button. */
+    border: none;               /* Removes any default button borders. */
+    border-radius: var(--border-radius-lg); /* Rounded corners for buttons. */
+    cursor: pointer;            /* Changes cursor to pointer on hover to indicate interactivity. */
+    font-size: var(--font-size-lg); /* Slightly larger font size for button text. */
+    font-weight: 700;           /* Bold font weight for emphasis. */
+    transition: background-color var(--transition-normal), transform var(--transition-fast), box-shadow var(--transition-normal); /* Smooth transitions for hover/active states. */
+    width: 100%;                /* Ensures the button takes the full width of its container. */
+    box-shadow: var(--shadow-md); /* Applies a soft shadow for depth and visual separation. */
+    letter-spacing: 0.5px;      /* Slightly increased letter spacing for aesthetic appeal. */
+    display: flex;              /* Uses flexbox for internal layout to align icon and text. */
+    align-items: center;        /* Vertically aligns items (icon and text) in the center. */
+    justify-content: center;    /* Horizontally centers items in the button. */
+    gap: var(--spacing-sm);     /* Creates space between the icon and the text. */
+    text-transform: uppercase;  /* Uppercase text for button labels. */
+}
+
+/* Hover state for general control buttons: darker blue background, slight lift, enhanced shadow. */
+.control-button:hover {
+    background-color: var(--color-tertiary-blue); /* Darker blue on hover. */
+    transform: translateY(-3px); /* Slight upward lift effect. */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover. */
+}
+
+/* Active state for general control buttons: 'pressed down' effect. */
+.control-button:active {
+    transform: translateY(0);   /* Returns to original position. */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3); /* Smaller shadow on active state. */
+}
+
+/* Focus state for general control buttons: ensures keyboard navigation is visible. */
+.control-button:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 3px;
+    border-radius: var(--border-radius-lg);
+}
+
+/* Styling for SVG icons embedded within buttons. */
+.button-icon {
+    display: inline-flex;       /* Ensures flex behavior for alignment. */
+    align-items: center;        /* Centers icon vertically. */
+    justify-content: center;    /* Centers icon horizontally. */
+    color: inherit;             /* Inherits color from parent button. */
+}
+
+.button-icon svg {
+    width: 20px;                /* Fixed width for SVG icons. */
+    height: 20px;               /* Fixed height for SVG icons. */
+    flex-shrink: 0;             /* Prevents icon from shrinking. */
+}
+
+/* Specific styling for the reset camera button, using a danger red color. */
+.control-button.reset-button {
+    background-color: var(--color-danger-red); /* Red background for reset button. */
+}
+
+/* Hover state for the reset camera button: darker red background. */
+.control-button.reset-button:hover {
+    background-color: var(--color-danger-red-hover); /* Darker red on hover. */
+}
+
+/* =====================================================================================================================
+ * INFORMATION AND CONTACT SECTIONS STYLING
+ * Styles for the "About This Simulation", "How to Use", "Technical Details", and "Project Information" sections.
+ * ===================================================================================================================== */
+
+/* General styling for informational sections within the controls panel. */
+.info-section, .instructions-section, .technical-details-section, .debug-section, .troubleshooting-section, .project-info-section {
+    padding-top: var(--spacing-md); /* Padding above the content of the section. */
+    border-top: 1px dashed var(--color-separator); /* A dashed line separating sections. */
+    margin-top: var(--spacing-lg); /* Space above the section. */
+}
+
+/* Styling for general informational text paragraphs. */
+.info-text {
+    font-size: var(--font-size-sm); /* Small font size for informational text. */
+    color: var(--color-text-medium); /* Medium gray text color. */
+    margin-bottom: var(--spacing-sm); /* Space below each paragraph. */
+    line-height: 1.5;           /* Improved line height for readability. */
+}
+
+/* No bottom margin for the last paragraph in an info section. */
+.info-text:last-of-type {
+    margin-bottom: 0;
+}
+
+/* Styling for emphasized text within info paragraphs (e.g., project name, version). */
+.info-text strong {
+    color: var(--color-text-light); /* Light text color for strong emphasis. */
+    font-weight: 700;           /* Bold font weight. */
+}
+
+/* Styling for the developer's name. */
+.developer-name {
+    font-weight: 700;           /* Bold font weight. */
+    color: var(--color-primary-blue); /* Primary blue color for highlighting. */
+    text-shadow: 0 0 3px rgba(99, 179, 237, 0.2); /* Subtle glow. */
+}
+
+/* Styling for the container of contact/social links. */
+.contact-links {
+    display: flex;              /* Uses flexbox for horizontal arrangement. */
+    gap: var(--spacing-lg);     /* Space between individual links. */
+    margin-top: var(--spacing-md); /* Space above the links. */
+    justify-content: center;    /* Centers the links horizontally. */
+    flex-wrap: wrap;            /* Allows links to wrap to the next line on small screens. */
+}
+
+/* Styling for individual social/contact links. */
+.social-link {
+    display: inline-flex;       /* Uses inline-flex for icon and text alignment. */
+    align-items: center;        /* Vertically aligns items. */
+    gap: var(--spacing-xs);     /* Space between icon and text. */
+    color: var(--color-text-light); /* Light text color. */
+    font-weight: 600;           /* Semi-bold font weight. */
+    transition: color var(--transition-fast), transform var(--transition-fast); /* Smooth transitions. */
+    text-decoration: none;      /* No underline by default. */
+    padding: var(--spacing-xxs) var(--spacing-sm); /* Small padding for clickable area. */
+    border-radius: var(--border-radius-sm); /* Rounded corners. */
+}
+
+/* Hover state for social links: change color and slight lift. */
+.social-link:hover {
+    color: var(--color-primary-blue); /* Primary blue on hover. */
+    transform: translateY(-2px); /* Slight upward lift. */
+    text-decoration: none;      /* Ensure no underline on hover. */
+    background-color: rgba(99, 179, 237, 0.05); /* Very subtle background on hover. */
+}
+
+/* Focus state for social links. */
+.social-link:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 2px;
+    border-radius: var(--border-radius-sm);
+}
+
+/* Styling for SVG icons within social links. */
+.social-link svg {
+    width: 20px;                /* Fixed width for icons. */
+    height: 20px;               /* Fixed height for icons. */
+    flex-shrink: 0;
+}
+
+/* Styling for instruction lists. */
+.instruction-list, .info-feature-list, .technical-list, .technical-sublist, .troubleshooting-list {
+    list-style: none;           /* Remove default bullet points. */
+    padding: 0;                 /* Remove default padding. */
+    margin: 0;                  /* Remove default margin. */
+}
+
+.instruction-list li, .info-feature-list li, .technical-list li, .troubleshooting-list li {
+    font-size: var(--font-size-sm); /* Small font size for list items. */
+    color: var(--color-text-medium); /* Medium gray text color. */
+    margin-bottom: var(--spacing-xs); /* Space below each list item. */
+    position: relative;         /* For custom bullet points. */
+    padding-left: var(--spacing-xl); /* Space for custom bullet. */
+    line-height: 1.5;           /* Improved line height. */
+}
+
+/* Custom bullet point for instruction lists. */
+.instruction-list li::before, .info-feature-list li::before, .technical-list li::before, .troubleshooting-list li::before {
+    content: '•';               /* Uses a Unicode bullet character. */
+    color: var(--color-primary-blue); /* Blue color for the bullet. */
+    position: absolute;         /* Position absolutely relative to the list item. */
+    left: 0;                    /* Aligns to the left edge. */
+    font-size: var(--font-size-md); /* Font size for the bullet. */
+    line-height: inherit;       /* Inherits line height for vertical alignment. */
+    font-weight: 700;           /* Bold bullet. */
+}
+
+/* Styling for strong text within instruction list items. */
+.instruction-list li strong {
+    color: var(--color-text-light); /* Light text color for emphasized words. */
+}
+
+/* Nested list styling for technical details. */
+.technical-sublist {
+    margin-top: var(--spacing-xs);
+    margin-left: var(--spacing-xl); /* Indent nested list. */
+}
+
+.technical-sublist li {
+    font-size: var(--font-size-xs); /* Smaller font for sub-list items. */
+    margin-bottom: var(--spacing-xxs);
+    padding-left: var(--spacing-lg); /* Indent for sub-bullets. */
+}
+
+.technical-sublist li::before {
+    content: '-'; /* Use hyphen as sub-bullet. */
+    color: var(--color-text-dark);
+    font-size: var(--font-size-sm);
+}
+
+/* =====================================================================================================================
+ * SYSTEM STATUS / DEBUG INFO STYLING
+ * Styles for the optional section displaying real-time performance metrics and debugging information.
+ * ===================================================================================================================== */
+
+.debug-section {
+    margin-top: var(--spacing-xxl); /* More space above this section. */
+    border-top: 1px dashed var(--color-separator); /* Separator line. */
+    padding-top: var(--spacing-lg); /* Padding above content. */
+}
+
+/* Grid layout for status items for better organization. */
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns. */
+    gap: var(--spacing-sm) var(--spacing-lg); /* Gap between grid items. */
+    margin-top: var(--spacing-md);
+}
+
+.status-item {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: space-between; /* Space out label and value. */
     align-items: center;
-    z-index: 1000; /* Ensure it's on top of everything */
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xxs);
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle background for each item. */
+    border-radius: var(--border-radius-sm);
+}
+
+.status-label {
+    color: var(--color-text-medium); /* Medium gray for labels. */
+    font-weight: 600;           /* Semi-bold. */
+    flex-shrink: 0;             /* Prevent label from shrinking. */
+    margin-right: var(--spacing-xs); /* Space between label and value. */
+}
+
+.status-value {
+    color: var(--color-primary-blue); /* Blue for values. */
+    font-weight: 400;           /* Normal font weight. */
+    font-family: 'monospace';   /* Monospace font for numerical data. */
+    text-align: right;          /* Align value to the right. */
+    overflow: hidden;           /* Hide overflow. */
+    text-overflow: ellipsis;    /* Add ellipsis if text is too long. */
+}
+
+.debug-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-dark);
+    margin-top: var(--spacing-md);
+    text-align: center;
+    font-style: italic;
+}
+
+/* =====================================================================================================================
+ * TROUBLESHOOTING TIPS STYLING
+ * Styles for the section providing common troubleshooting advice.
+ * ===================================================================================================================== */
+
+.troubleshooting-section {
+    margin-top: var(--spacing-xxl);
+    border-top: 1px dashed var(--color-separator);
+    padding-top: var(--spacing-lg);
+}
+
+.troubleshooting-list li {
+    margin-bottom: var(--spacing-md); /* More space between troubleshooting points. */
+}
+
+.troubleshooting-list li strong {
+    color: var(--color-danger-red); /* Highlight keywords in red. */
+}
+
+/* =====================================================================================================================
+ * PROJECT INFORMATION & VERSIONING STYLING
+ * Styles for the section displaying details about the project itself.
+ * ===================================================================================================================== */
+
+.project-info-section {
+    margin-top: var(--spacing-xxl);
+    border-top: 1px dashed var(--color-separator);
+    padding-top: var(--spacing-lg);
+}
+
+/* =====================================================================================================================
+ * PLANET LABEL STYLING (ON HOVER)
+ * Styles the HTML element that displays planet names when the user hovers their mouse cursor over a planet.
+ * ===================================================================================================================== */
+
+.planet-label {
+    position: absolute;         /* Positioned absolutely to follow the mouse cursor. */
+    display: none;              /* Initially hidden, shown by JavaScript on hover. */
+    background-color: rgba(36, 46, 60, 0.9); /* Dark background with transparency. */
+    color: var(--color-text-light); /* Light text color for the planet name. */
+    padding: var(--spacing-sm) var(--spacing-md); /* Padding around the text. */
+    border-radius: var(--border-radius-md); /* Rounded corners for the label. */
+    font-size: var(--font-size-md); /* Font size for the planet name. */
+    font-weight: 600;           /* Semi-bold font weight. */
+    white-space: nowrap;        /* Prevents the text from wrapping to multiple lines. */
+    pointer-events: none;       /* CRUCIAL: Allows mouse events to pass through the label to the canvas below,
+                                   enabling continued interaction with the 3D scene. */
+    z-index: var(--z-index-label); /* Ensures the label is on top of other elements like the controls panel. */
+    box-shadow: var(--shadow-sm); /* Applies a soft shadow for visual depth. */
+    transform: translate(-50%, -120%); /* Adjusts position to be above and horizontally centered on the mouse cursor. */
+    transition: opacity var(--transition-fast); /* Smooth fade-in/fade-out transition. */
+    opacity: 0;                 /* Starts with 0 opacity, becomes 1 when displayed by JS. */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Subtle text shadow for improved readability on dark backgrounds. */
+    border: 1px solid rgba(99, 179, 237, 0.3); /* Subtle blue border for definition. */
+}
+
+/* When JavaScript sets display to 'block', the label fades in. */
+.planet-label[style*="display: block"] {
+    opacity: 1;
+}
+
+/* =====================================================================================================================
+ * CUSTOM MESSAGE BOX STYLING (REPLACES BROWSER'S ALERT())
+ * This section styles a custom modal-like dialog box designed to display messages or alerts to the user.
+ * It replaces the intrusive native browser `alert()` and `confirm()` functions for a more integrated and better User Experience.
+ * ===================================================================================================================== */
+
+.message-box {
+    position: fixed;            /* Fixed to cover the entire viewport. */
+    top: 0; left: 0;            /* Aligns to the top-left corner. */
+    width: 100vw;               /* Full viewport width. */
+    height: 100vh;              /* Full viewport height. */
+    background-color: rgba(0, 0, 0, var(--opacity-medium)); /* Dark, semi-transparent overlay. */
+    display: flex;              /* Uses flexbox for centering content. */
+    justify-content: center;    /* Centers horizontally. */
+    align-items: center;        /* Centers vertically. */
+    z-index: var(--z-index-message-box); /* Ensures it's above everything except the loading overlay. */
+    opacity: 0;                 /* Initially hidden (faded out). */
+    visibility: hidden;         /* Initially not visible (prevents interaction). */
+    transition: opacity var(--transition-normal), visibility var(--transition-normal); /* Smooth fade-in/out. */
+    pointer-events: none;       /* Prevents interaction when hidden. */
+}
+
+/* When `aria-hidden="false"` is set by JavaScript, the message box becomes visible. */
+.message-box[aria-hidden="false"] {
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-    border-radius: 10px; /* Match canvas border-radius */
-}
-
-/* Hidden state for the loading overlay */
-#loading-overlay.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none; /* Allow clicks through when hidden */
-}
-
-/* Loading spinner animation */
-.loading-spinner {
-    border: 8px solid rgba(139, 233, 253, 0.2); /* Light blue transparent border */
-    border-top: 8px solid #8be9fd; /* Solid light blue top border */
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1.5s linear infinite; /* Spin animation */
-    margin-bottom: 20px;
-}
-
-/* Keyframe animation for the spinner */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Loading text styling */
-.loading-text {
-    font-size: 1.5em;
-    color: #f8f8f2;
-    margin-bottom: 10px;
-    text-shadow: 0 0 5px rgba(139, 233, 253, 0.3);
-}
-
-/* Loading progress percentage display */
-#loading-progress {
-    font-size: 1.2em;
-    color: #bd93f9;
-    font-weight: 700;
-}
-
-/* --- 7. Sidebar Styling (Controls and Info) --- */
-
-/* Sidebar container for controls and info */
-#controls-sidebar {
-    flex: 1; /* Sidebar takes less space */
-    min-width: 280px; /* Minimum width for sidebar */
-    max-width: 400px; /* Maximum width for sidebar */
-    background-color: rgba(26, 26, 46, 0.8); /* Semi-transparent dark background */
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(139, 233, 253, 0.1);
-    overflow-y: auto; /* Enable scrolling for content if it overflows */
-    height: auto; /* Adjust height based on content */
-    max-height: calc(100vh - 200px); /* Limit height to prevent overflow on smaller screens */
-}
-
-/* Sidebar title */
-.sidebar-title {
-    font-size: 1.8em;
-    color: #f8f8f2;
-    margin-bottom: 15px;
-    text-align: center;
-    border-bottom: 2px solid #6272a4;
-    padding-bottom: 10px;
-}
-
-/* Sidebar description */
-.sidebar-description {
-    font-size: 1em;
-    color: #a0a0a0;
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-/* Container for planet control groups */
-#planet-sliders {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between each planet control group */
-}
-
-/* Individual planet control group */
-.planet-control-group {
-    background-color: rgba(40, 42, 54, 0.7); /* Slightly lighter dark background */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(139, 233, 253, 0.05);
-}
-
-/* Label for planet speed sliders */
-.planet-control-group label {
-    display: block;
-    font-size: 1.1em;
-    color: #f8f8f2;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-/* Styling for range input sliders */
-.slider {
-    width: 100%;
-    -webkit-appearance: none; /* Remove default styling for WebKit browsers */
-    appearance: none;
-    height: 8px;
-    background: #44475a; /* Dark track */
-    outline: none;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
-
-.slider:hover {
-    background: #6272a4; /* Lighter track on hover */
-}
-
-/* Thumb styling for WebKit browsers */
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #bd93f9; /* Purple thumb */
-    cursor: grab;
-    box-shadow: 0 0 5px rgba(189, 147, 249, 0.5);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.slider::-webkit-slider-thumb:hover {
-    background: #ff79c6; /* Pink thumb on hover */
-    box-shadow: 0 0 8px rgba(255, 121, 198, 0.7);
-}
-
-.slider::-webkit-slider-thumb:active {
-    cursor: grabbing;
-}
-
-/* Thumb styling for Firefox */
-.slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #bd93f9;
-    cursor: grab;
-    box-shadow: 0 0 5px rgba(189, 147, 249, 0.5);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    border: none; /* Remove default border */
-}
-
-.slider::-moz-range-thumb:hover {
-    background: #ff79c6;
-    box-shadow: 0 0 8px rgba(255, 121, 198, 0.7);
-}
-
-.slider::-moz-range-thumb:active {
-    cursor: grabbing;
-}
-
-/* Value display next to slider */
-.slider-value {
-    display: block;
-    text-align: right;
-    font-size: 0.9em;
-    color: #8be9fd;
-    margin-top: 5px;
-    font-weight: 500;
-}
-
-/* --- 8. Info Panel Styling --- */
-
-/* Info panel container */
-#info-panel {
-    margin-top: 30px;
-    background-color: rgba(40, 42, 54, 0.7);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(139, 233, 253, 0.05);
-    transition: all 0.4s ease-in-out; /* Smooth transition for showing/hiding */
-    opacity: 1;
-    max-height: 500px; /* Max height for transition */
-    overflow: hidden; /* Hide overflow during transition */
-}
-
-/* Hidden state for info panel */
-#info-panel.hidden {
-    opacity: 0;
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-    visibility: hidden; /* Hide from screen readers and layout */
-}
-
-/* Info panel title */
-.info-panel-title {
-    font-size: 1.5em;
-    color: #f8f8f2;
-    margin-bottom: 15px;
-    border-bottom: 1px dashed #6272a4;
-    padding-bottom: 8px;
-    text-align: center;
-}
-
-/* Info list styling */
-.info-list {
-    margin-bottom: 20px;
-}
-
-.info-list li {
-    font-size: 0.95em;
-    color: #a0a0a0;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-/* Bullet point icon */
-.info-list li .bullet-point {
-    color: #bd93f9;
-    font-size: 1.2em;
-    line-height: 1;
-    flex-shrink: 0; /* Prevent bullet from shrinking */
-}
-
-/* Info text paragraphs */
-.info-text {
-    font-size: 0.95em;
-    color: #a0a0a0;
-    margin-bottom: 15px;
-    text-align: justify;
-}
-
-.info-text:last-child {
-    margin-bottom: 0;
-}
-
-/* --- 9. Footer Styling --- */
-
-/* Main footer section */
-#main-footer {
-    text-align: center;
-    padding: 25px 20px;
-    margin-top: 30px; /* Space above footer */
-    background-color: rgba(26, 26, 46, 0.8);
-    border-radius: 10px;
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(139, 233, 253, 0.1);
-    font-size: 0.9em;
-    color: #a0a0a0;
-}
-
-/* Copyright text */
-.footer-text {
-    margin-bottom: 15px;
-    font-weight: 300;
-}
-
-/* Footer links container */
-.footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px; /* Space between links */
-    margin-bottom: 15px;
-}
-
-/* Individual footer link styling */
-.footer-link {
-    color: #8be9fd;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.footer-link:hover {
-    color: #bd93f9;
-    transform: translateY(-2px);
-}
-
-/* Footer note for texture source */
-.footer-note {
-    margin-top: 10px;
-    font-style: italic;
-    color: #6272a4;
-}
-
-.footer-note a {
-    color: #8be9fd;
-    font-weight: 500;
-}
-
-/* Project details section in footer */
-.project-details {
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px dashed #44475a;
-    text-align: left;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.8;
-}
-
-.project-details p {
-    margin-bottom: 8px;
-    color: #c0c0c0;
-}
-
-.project-details p strong {
-    color: #f8f8f2;
-}
-
-/* --- 10. Responsive Design (Media Queries) --- */
-
-/*
-    Media queries for mobile responsiveness.
-    Adjusts layout and font sizes for smaller screens.
-*/
-
-/* For screens smaller than 1024px (e.g., tablets in landscape) */
-@media (max-width: 1024px) {
-    #main-content {
-        flex-direction: column; /* Stack canvas and sidebar vertically */
-        align-items: center; /* Center items when stacked */
-    }
-
-    #solarSystemCanvas {
-        flex: none; /* Remove flex grow */
-        width: 95%; /* Take more width */
-        max-width: 800px; /* Limit max width */
-        margin-bottom: 20px;
-    }
-
-    #controls-sidebar {
-        flex: none; /* Remove flex grow */
-        width: 95%; /* Take more width */
-        max-width: 800px; /* Limit max width */
-        margin-top: 0; /* Remove top margin if any */
-        max-height: none; /* Allow sidebar to expand if needed */
-    }
-
-    .app-title {
-        font-size: 2.5em;
-    }
-
-    .app-description {
-        font-size: 1em;
-    }
-
-    .control-button {
-        padding: 10px 20px;
-        font-size: 0.95em;
-    }
-
-    .sidebar-title {
-        font-size: 1.6em;
-    }
-
-    .planet-control-group label {
-        font-size: 1em;
-    }
-
-    .info-panel-title {
-        font-size: 1.3em;
-    }
-}
-
-/* For screens smaller than 768px (e.g., tablets in portrait, large phones) */
-@media (max-width: 768px) {
-    #app-container {
-        padding: 15px;
-    }
-
-    #main-header {
-        padding: 20px 15px;
-    }
-
-    .app-title {
-        font-size: 2em;
-    }
-
-    .app-description {
-        font-size: 0.9em;
-    }
-
-    .header-controls {
-        flex-direction: column; /* Stack buttons vertically */
-        gap: 10px;
-    }
-
-    .control-button {
-        width: 100%; /* Full width buttons */
-        max-width: 300px; /* Limit button width */
-        margin: 0 auto;
-    }
-
-    #solarSystemCanvas {
-        min-height: 400px;
-        width: 100%; /* Full width */
-    }
-
-    #controls-sidebar {
-        min-width: unset; /* Remove min-width constraint */
-        width: 100%; /* Full width */
-        padding: 20px;
-    }
-
-    .sidebar-title {
-        font-size: 1.5em;
-    }
-
-    .sidebar-description {
-        font-size: 0.9em;
-    }
-
-    .planet-control-group label {
-        font-size: 0.95em;
-    }
-
-    .slider-value {
-        font-size: 0.85em;
-    }
-
-    .info-panel-title {
-        font-size: 1.2em;
-    }
-
-    .info-list li, .info-text {
-        font-size: 0.9em;
-    }
-
-    #main-footer {
-        padding: 20px 15px;
-    }
-
-    .footer-text, .footer-note, .project-details p {
-        font-size: 0.85em;
-    }
-
-    .footer-links {
-        flex-direction: column; /* Stack footer links vertically */
-        gap: 10px;
-    }
-}
-
-/* For screens smaller than 480px (e.g., most smartphones) */
-@media (max-width: 480px) {
-    #app-container {
-        padding: 10px;
-    }
-
-    #main-header {
-        padding: 15px 10px;
-    }
-
-    .app-title {
-        font-size: 1.8em;
-        letter-spacing: 1px;
-    }
-
-    .app-description {
-        font-size: 0.85em;
-    }
-
-    .control-button {
-        padding: 8px 15px;
-        font-size: 0.85em;
-    }
-
-    #solarSystemCanvas {
-        min-height: 300px;
-    }
-
-    #controls-sidebar {
-        padding: 15px;
-    }
-
-    .sidebar-title {
-        font-size: 1.3em;
-    }
-
-    .sidebar-description {
-        font-size: 0.8em;
-    }
-
-    .planet-control-group label {
-        font-size: 0.9em;
-    }
-
-    .slider-value {
-        font-size: 0.8em;
-    }
-
-    .info-panel-title {
-        font-size: 1.1em;
-    }
-
-    .info-list li, .info-text {
-        font-size: 0.85em;
-    }
-
-    #main-footer {
-        padding: 15px 10px;
-    }
-
-    .footer-text, .footer-note, .project-details p {
-        font-size: 0.8em;
-    }
-}
-
-/* --- 11. Utility Classes --- */
-
-/* Class to hide elements */
-.hidden {
-    display: none !important; /* Use !important to ensure override */
-}
-
-/* Class for slight blur effect */
-.blur-effect {
-    filter: blur(3px);
-    transition: filter 0.3s ease;
-}
-
-/* --- 12. Accessibility Enhancements (Optional) --- */
-
-/* Focus styles for keyboard navigation */
-button:focus-visible, input[type="range"]:focus-visible, a:focus-visible {
-    outline: 2px solid #bd93f9; /* Purple outline for focus */
-    outline-offset: 3px;
-    border-radius: 5px; /* Match element's border-radius where applicable */
-}
-
-/* --- 13. Advanced Visual Effects (Optional but good for line count) --- */
-
-/* Background star field effect (conceptual, actual stars are Three.js background) */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.05) 0%, transparent 20%);
-    pointer-events: none; /* Allow clicks through */
-    z-index: -1; /* Place behind content */
-    opacity: 0.3;
-}
-
-/* Subtle animation for the app title */
-.app-title {
-    animation: fadeInScale 1s ease-out forwards;
-}
-
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Button hover animation (already in .control-button:hover, but can add more complex ones) */
-.control-button {
-    position: relative;
-    overflow: hidden;
-}
-
-.control-button::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: width 0.4s ease-out, height 0.4s ease-out, opacity 0.4s ease-out;
-    z-index: 0;
-}
-
-.control-button:hover::after {
-    width: 200%;
-    height: 200%;
-    opacity: 1;
-}
-
-.control-button span {
-    position: relative;
-    z-index: 1;
-}
-
-/* More detailed slider track and thumb styling for cross-browser compatibility */
-/* Track */
-input[type=range].slider::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 8px;
-    cursor: pointer;
-    background: #44475a;
-    border-radius: 5px;
-    border: 0.2px solid #010101;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-
-input[type=range].slider:focus::-webkit-slider-runnable-track {
-    background: #6272a4;
-}
-
-input[type=range].slider::-moz-range-track {
-    width: 100%;
-    height: 8px;
-    cursor: pointer;
-    background: #44475a;
-    border-radius: 5px;
-    border: 0.2px solid #010101;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-
-input[type=range].slider:focus::-moz-range-track {
-    background: #6272a4;
-}
-
-input[type=range].slider::-ms-track {
-    width: 100%;
-    height: 8px;
-    cursor: pointer;
-    background: transparent;
-    border-color: transparent;
-    border-width: 16px 0;
-    color: transparent;
-}
-
-input[type=range].slider::-ms-fill-lower {
-    background: #44475a;
-    border: 0.2px solid #010101;
-    border-radius: 10px;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-
-input[type=range].slider::-ms-fill-upper {
-    background: #44475a;
-    border: 0.2px solid #010101;
-    border-radius: 10px;
-    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-}
-
-input[type=range].slider::-ms-thumb {
-    box-shadow: 0 0 5px rgba(189, 147, 249, 0.5);
-    border: 1px solid #000000;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #bd93f9;
-    cursor: grab;
-}
-
-input[type=range].slider:focus::-ms-fill-lower {
-    background: #6272a4;
-}
-
-input[type=range].slider:focus::-ms-fill-upper {
-    background: #6272a4;
-}
-
-/* Additional styling for the info panel list items for better visual separation */
-.info-list li:not(:last-child) {
-    border-bottom: 1px dotted rgba(160, 160, 160, 0.2);
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-}
-
-/* Styling for the current year and last updated date in footer */
-#current-year, #last-updated-date {
-    font-weight: 600;
-    color: #f8f8f2;
-}
-
-/* Ensure the main content area has a minimum height to push the footer down */
-#main-content {
-    min-height: 60vh; /* Adjust as needed */
-}
-
-/* Add a subtle border to the overall app container */
-#app-container {
-    border: 1px solid rgba(139, 233, 253, 0.05); /* Very subtle light blue border */
-}
-
-/* Add a hover effect to planet control groups */
-.planet-control-group:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border-color: rgba(139, 233, 253, 0.2);
-}
-
-/* Transition for all interactive elements */
-button, input[type="range"], a, .planet-control-group {
-    transition: all 0.3s ease-in-out;
-}
-
-/* Add a slight text shadow to all text for better readability on dark background */
-body, .app-description, .sidebar-description, .info-list li, .info-text, .footer-text, .footer-note, .project-details p {
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-}
-
-/* Specific text shadow for titles */
-.app-title, .sidebar-title, .info-panel-title {
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-}
-
-/* Ensure consistent padding for all major sections */
-header, main, footer {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-/* Adjust padding for mobile */
-@media (max-width: 768px) {
-    header, main, footer {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    header, main, footer {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-}
-
-/* Add a subtle glow to the canvas border on active/focus */
-#solarSystemCanvas:focus-within {
-    border: 2px solid #bd93f9;
-    box-shadow: 0 0 30px rgba(189, 147, 249, 0.8);
-}
-
-/* Style for the planet labels on hover (will be dynamically created by JS) */
-.planet-label {
-    position: absolute;
-    background-color: rgba(40, 42, 54, 0.9);
-    color: #f8f8f2;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
-    pointer-events: none; /* Allow mouse events to pass through to canvas */
-    white-space: nowrap;
-    transform: translate(-50%, -120%); /* Position above the mouse pointer */
-    z-index: 100; /* Ensure it's above other elements */
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(139, 233, 253, 0.1);
-}
-
-.planet-label.visible {
-    opacity: 1;
-}
-
-/* Additional styling for the icons in footer links */
-.footer-link .icon {
-    font-size: 1.1em;
-}
-
-/* Add a subtle animation to the loading text */
-.loading-text {
-    animation: pulse 1.5s infinite alternate;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
-}
-
-/* Add a subtle animation to the progress percentage */
-#loading-progress {
-    animation: bounceIn 0.8s ease-out;
-}
-
-@keyframes bounceIn {
-    0% {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 0.7;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Add a border to the loading spinner */
-.loading-spinner {
-    border: 8px solid rgba(139, 233, 253, 0.2);
-    border-top: 8px solid #8be9fd;
-    border-right: 8px solid #bd93f9; /* Add another color for visual interest */
-    border-bottom: 8px solid #ff79c6; /* And another */
-}
-
-/* Ensure the canvas is always visible and takes up available space */
-#solarSystemCanvas {
-    display: block;
-    width: 100%;
-    height: 100%; /* Will be managed by JS for dynamic resizing */
-    min-height: 400px; /* Fallback min height */
-}
-
-/* Ensure the sidebar has a scrollbar if content overflows */
-#controls-sidebar {
-    overflow-y: auto;
-    /* Add a custom scrollbar style for better aesthetics */
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #6272a4 #282a36; /* thumb track */
-}
-
-/* Webkit browsers scrollbar */
-#controls-sidebar::-webkit-scrollbar {
-    width: 8px;
-}
-
-#controls-sidebar::-webkit-scrollbar-track {
-    background: #282a36;
-    border-radius: 10px;
-}
-
-#controls-sidebar::-webkit-scrollbar-thumb {
-    background-color: #6272a4;
-    border-radius: 10px;
-    border: 2px solid #282a36;
-}
-
-#controls-sidebar::-webkit-scrollbar-thumb:hover {
-    background-color: #8be9fd;
-}
-
-/* Styling for the "How to Use" section within the info panel */
-#info-panel ul.info-list {
-    margin-bottom: 20px;
-    padding-left: 0; /* Remove default padding for ul */
-}
-
-#info-panel ul.info-list li {
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(160, 160, 160, 0.1); /* Lighter separator */
-}
-
-#info-panel ul.info-list li:last-child {
-    border-bottom: none;
-}
-
-/* Styling for the "About the Simulation" section */
-#info-panel .info-text {
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-/* Add some margin to the bottom of the main content before the footer */
-#main-content {
-    margin-bottom: 30px;
-}
-
-/* Ensure the footer links have some padding */
-.footer-link {
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: rgba(139, 233, 253, 0.05);
-}
-
-.footer-link:hover {
-    background-color: rgba(139, 233, 253, 0.15);
-}
-
-/* Add a box-shadow to the sidebar on scroll to indicate more content */
-#controls-sidebar::before {
-    content: '';
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#controls-sidebar.scrolled::before {
-    opacity: 1;
-}
-
-#controls-sidebar::after {
-    content: '';
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 10px;
-    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-#controls-sidebar.scrolled::after {
-    opacity: 1;
-}
-
-/* Adjust button text for smaller screens to prevent overflow */
-@media (max-width: 550px) {
-    .control-button {
-        padding: 8px 10px;
-        font-size: 0.8em;
-        gap: 5px;
-    }
-    .control-button .icon {
-        font-size: 1em;
-    }
-    .control-button span:not(.icon) { /* Hide text for very small screens if needed */
-        display: none;
-    }
-    .control-button:hover span:not(.icon) {
-        display: inline; /* Show on hover */
-    }
-}
-
-/* Further refinements to ensure elements are well-spaced and readable */
-.planet-control-group label {
-    margin-bottom: 8px; /* Slightly less margin for labels */
-}
-
-.slider-value {
-    margin-top: 8px; /* Slightly more margin for value */
-}
-
-/* Add some padding to the top of the info panel when it's visible */
-#info-panel:not(.hidden) {
-    padding-top: 20px;
-}
-
-/* Ensure the footer project details are well-formatted */
-.project-details p {
-    padding-left: 10px;
-    border-left: 2px solid rgba(139, 233, 253, 0.1);
-    margin-bottom: 10px;
-}
-
-.project-details p:last-child {
-    margin-bottom: 0;
-}
-
-/* Add a subtle animation to the header description */
-.app-description {
-    animation: slideInFromTop 1s ease-out 0.5s forwards;
-    opacity: 0;
-    transform: translateY(-20px);
-}
-
-@keyframes slideInFromTop {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Add a subtle animation to the header controls */
-.header-controls {
-    animation: fadeIn 1s ease-out 1s forwards;
-    opacity: 0;
-}
-
-@keyframes fadeIn {
-    to {
-        opacity: 1;
-    }
-}
-
-/* Styling for the default favicon (if not provided, browser will use generic) */
-/* This is more for documentation and a reminder */
-link[rel="icon"] {
-    /* No direct CSS styling for favicons, but this highlights its presence */
-}
-
-/* Ensure images (if any were used) are responsive */
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* Add a subtle border to the canvas to make it stand out */
-#solarSystemCanvas {
-    border: 1px solid rgba(139, 233, 253, 0.1);
-}
-
-/* Final check on overall padding and margins to ensure no content is cut off */
-#app-container {
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-/* Ensure the canvas and sidebar fill the available height */
-#main-content {
-    align-items: stretch; /* Make children stretch to fill height */
-}
-
-/* Adjust flex basis for sidebar on larger screens if needed */
-@media (min-width: 1025px) {
-    #controls-sidebar {
-        flex-basis: 350px; /* Give sidebar a fixed width on large screens */
-        flex-shrink: 0; /* Prevent it from shrinking */
-    }
-    #solarSystemCanvas {
-        flex-grow: 1; /* Allow canvas to grow */
-    }
-}
-
-/* Add a subtle gradient to the slider thumb */
-.slider::-webkit-slider-thumb {
-    background: linear-gradient(45deg, #bd93f9, #ff79c6);
-}
-
-.slider::-moz-range-thumb {
-    background: linear-gradient(45deg, #bd93f9, #ff79c6);
-}
-
-.slider::-ms-thumb {
-    background: linear-gradient(45deg, #bd93f9, #ff79c6);
-}
-
-.slider::-webkit-slider-thumb:hover {
-    background: linear-gradient(45deg, #ff79c6, #bd93f9);
-}
-
-.slider::-moz-range-thumb:hover {
-    background: linear-gradient(45deg, #ff79c6, #bd93f9);
-}
-
-.slider::-ms-thumb:hover {
-    background: linear-gradient(45deg, #ff79c6, #bd93f9);
-}
-
-/* Add a subtle shadow to the slider track */
-.slider::-webkit-slider-runnable-track {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-.slider::-moz-range-track {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-.slider::-ms-track {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-/* Ensure the overall page structure is robust */
-html, body {
-    height: 100%;
-}
-
-/* Set min-height for main content to ensure it pushes footer down */
-#main-content {
-    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); /* Adjust based on actual header/footer heights and padding */
-    /* Using CSS variables for heights would be ideal here if dynamically calculated */
-}
-
-/* Fallback for CSS variables if not defined */
-:root {
-    --header-height: 180px; /* Approximate height */
-    --footer-height: 250px; /* Approximate height */
-}
-
-/* Add a subtle animation to the footer links on load */
-.footer-link {
-    animation: fadeInSlideUp 0.8s ease-out forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.footer-link:nth-child(1) { animation-delay: 1.5s; }
-.footer-link:nth-child(2) { animation-delay: 1.7s; }
-.footer-link:nth-child(3) { animation-delay: 1.9s; }
-
-@keyframes fadeInSlideUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Add a background texture to the body for more depth */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgPHBhdGggZmlsbD0iIzE1MTUxNSIgZD0iTSAwIDAgNjAgMCA2MCA2MCAwIDYwIFogTSAzMCA2MCBDIDEzLjQzMSAzMCAxMy40MzEgMzAgMzAgMCBDIDQ2LjU2OSAzMCA0Ni41NjkgMzAgMzAgNjAgWiIgLz4NCjwvc3ZnPg=='); /* Subtle dark hexagonal pattern */
-    background-repeat: repeat;
-    opacity: 0.1;
-    pointer-events: none;
-    z-index: -2;
-}
-
-/* Ensure the loading overlay covers the canvas only, not the whole screen */
-#loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px; /* Match canvas border radius */
-    overflow: hidden; /* Ensure spinner doesn't escape */
-}
-
-/* Adjust the z-index of the canvas to be below the loading overlay */
-#solarSystemCanvas {
-    z-index: 1;
-}
-
-/* Ensure the main content has a relative position for absolute children like loading overlay */
-#main-content {
-    position: relative;
-}
-
-/* Add a slight border to the planet control groups for better definition */
-.planet-control-group {
-    border: 1px solid rgba(139, 233, 253, 0.08);
-}
-
-/* Add a subtle shadow to the info panel */
-#info-panel {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-}
-
-/* Final touches for mobile layout */
-@media (max-width: 480px) {
-    .header-controls {
-        padding: 0 5px; /* Reduce padding for very small screens */
-    }
-    .control-button {
-        padding: 6px 8px; /* Even smaller padding */
-        font-size: 0.75em;
-    }
-}
-
-/* Ensure consistent spacing around the project details in the footer */
-.project-details {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-/* Add a border to the main app container for a framed look */
-#app-container {
-    border: 2px solid #1a1a2e; /* Darker border */
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.7); /* More prominent shadow */
-}
-
-/* Add a subtle inset shadow to the header and sidebar for depth */
-#main-header, #controls-sidebar {
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Add a subtle text shadow to all labels and values */
-label, .slider-value {
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
-}
-
-/* Ensure the canvas is always centered if there's extra space */
-#main-content {
-    justify-content: center; /* Center horizontally */
-    align-items: flex-start; /* Align items to the start vertically */
-}
-
-/* Adjust for very wide screens, prevent content from spreading too much */
-@media (min-width: 1920px) {
-    #app-container {
-        max-width: 1800px; /* Limit max width of the whole app */
-    }
-}
-
-/* Adjust the font size of the footer project details for readability */
-.project-details p {
-    font-size: 0.88em;
-}
-
-/* Add a subtle background to the footer links */
-.footer-link {
-    background-color: rgba(139, 233, 253, 0.03);
-}
-
-/* Ensure the main content has a flex-wrap property for better responsiveness */
-#main-content {
-    flex-wrap: wrap; /* Allows wrapping on smaller screens */
-}
-
-/* Adjust order of elements on smaller screens if needed (e.g., sidebar below canvas) */
-@media (max-width: 1024px) {
-    #solarSystemCanvas {
-        order: 1; /* Canvas first */
-    }
-    #controls-sidebar {
-        order: 2; /* Sidebar second */
-    }
-}
-
-/* Add a subtle animation to the planet control groups on load */
-.planet-control-group {
-    animation: fadeInSlideUp 0.8s ease-out forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.planet-control-group:nth-child(1) { animation-delay: 1.2s; }
-.planet-control-group:nth-child(2) { animation-delay: 1.3s; }
-.planet-control-group:nth-child(3) { animation-delay: 1.4s; }
-.planet-control-group:nth-child(4) { animation-delay: 1.5s; }
-.planet-control-group:nth-child(5) { animation-delay: 1.6s; }
-.planet-control-group:nth-child(6) { animation-delay: 1.7s; }
-.planet-control-group:nth-child(7) { animation-delay: 1.8s; }
-.planet-control-group:nth-child(8) { animation-delay: 1.9s; }
-.planet-control-group:nth-child(9) { animation-delay: 2.0s; } /* For the Sun's rotation speed */
-
-/* Ensure the info panel also animates in */
-#info-panel {
-    animation: fadeInSlideUp 0.8s ease-out 2.2s forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-/* Add a focus outline for the entire app container if it's ever focused */
-#app-container:focus-within {
-    outline: 2px solid #bd93f9;
-    outline-offset: 5px;
-}
-
-/* General button styling for consistent look */
-button {
-    font-family: 'Inter', sans-serif;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-}
-
-button:active {
+    pointer-events: all;        /* Allows interaction when visible. */
+}
+
+/* Styling for the content container of the message box. */
+.message-box-content {
+    background-color: var(--color-panel-bg); /* Uses the same background as the controls panel for consistency. */
+    padding: var(--spacing-xxxl); /* Generous padding. */
+    border-radius: var(--border-radius-xl); /* Rounded corners. */
+    box-shadow: var(--shadow-lg); /* Deep shadow. */
+    max-width: 450px;           /* Maximum width for the message box. */
+    text-align: center;         /* Centers text content. */
+    border: 1px solid var(--color-panel-border); /* Subtle border. */
+    transform: translateY(-20px); /* Initial slight lift for the animation. */
+    transition: transform var(--transition-normal) ease-out; /* Smooth slide-down animation. */
+}
+
+/* When the message box becomes visible, the content slides into place. */
+.message-box[aria-hidden="false"] .message-box-content {
     transform: translateY(0);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Add a border to the loading progress text */
-#loading-progress {
-    border: 1px solid #bd93f9;
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: rgba(189, 147, 249, 0.1);
+/* Styling for the main text content of the message box. */
+#message-box-text {
+    font-size: var(--font-size-lg); /* Large font size for the message. */
+    color: var(--color-text-light); /* Light text color. */
+    margin-bottom: var(--spacing-xl); /* Space below the message text. */
+    line-height: 1.5;
 }
 
-/* Ensure the main content area has a minimum height to avoid collapsing */
-#main-content {
-    min-height: 50vh; /* Adjust as necessary */
+/* Styling for the close button of the message box. */
+.message-box-button {
+    background-color: var(--color-secondary-blue); /* Blue background. */
+    color: white;               /* White text. */
+    padding: var(--spacing-sm) var(--spacing-lg); /* Padding. */
+    border: none;               /* No border. */
+    border-radius: var(--border-radius-md); /* Rounded corners. */
+    cursor: pointer;            /* Pointer cursor. */
+    font-size: var(--font-size-md); /* Medium font size. */
+    font-weight: 600;           /* Semi-bold. */
+    transition: background-color var(--transition-fast), transform var(--transition-fast); /* Smooth transitions. */
+    min-width: 100px;           /* Minimum width for the button. */
+    box-shadow: var(--shadow-sm); /* Small shadow. */
 }
 
-/* Add a slight border to the header controls */
-.header-controls {
-    border-top: 1px dashed rgba(139, 233, 253, 0.1);
-    padding-top: 20px;
-    margin-top: 20px;
+/* Hover state for the message box button. */
+.message-box-button:hover {
+    background-color: var(--color-tertiary-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-/* Ensure the footer links are vertically aligned */
-.footer-links {
-    align-items: center;
+/* Active state for the message box button. */
+.message-box-button:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Add a subtle background to the project details section */
-.project-details {
-    background-color: rgba(40, 42, 54, 0.5);
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
+/* Focus state for the message box button. */
+.message-box-button:focus-visible {
+    outline: 2px solid var(--color-primary-blue);
+    outline-offset: 3px;
+    border-radius: var(--border-radius-md);
 }
 
-/* Adjust the font size of the footer note */
-.footer-note {
-    font-size: 0.85em;
-}
+/* =====================================================================================================================
+ * RESPONSIVE ADJUSTMENTS (MEDIA QUERIES)
+ * This section provides media queries to ensure optimal viewing and usability on different screen sizes,
+ * including mobile, tablet, and desktop devices. Styles are adjusted to maintain a good user experience.
+ * ===================================================================================================================== */
 
-/* Ensure the overall layout is robust and flexible */
-html, body, #app-container {
-    height: 100%;
-    width: 100%;
-}
-
-/* Add a subtle background pattern to the main content area */
-#main-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0iIzAwMDAwMCIgLz4NCjwvc3ZnPg=='); /* Tiny black dot pattern */
-    background-repeat: repeat;
-    opacity: 0.05;
-    pointer-events: none;
-    z-index: 0; /* Below canvas and sidebar */
-    border-radius: 10px;
-}
-
-/* Adjust the z-index for main content children */
-#solarSystemCanvas {
-    z-index: 2; /* Above the pattern */
-    position: relative; /* Establish stacking context */
-}
-
-#controls-sidebar {
-    z-index: 2; /* Above the pattern */
-    position: relative; /* Establish stacking context */
-}
-
-/* Ensure the loading overlay is always on top of the canvas */
-#loading-overlay {
-    z-index: 1000;
-}
-
-/* Add a subtle animation to the planet labels */
-.planet-label {
-    animation: fadeInScaleUp 0.3s ease-out forwards;
-}
-
-@keyframes fadeInScaleUp {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -120%) scale(0.8);
+/* Adjustments for tablet and smaller desktop screens (max-width: 1024px). */
+@media (max-width: 1024px) {
+    /* Controls Panel adjustments */
+    #controls-panel {
+        width: 280px;           /* Slightly narrower panel. */
+        padding: var(--spacing-xl); /* Reduced padding. */
+        top: var(--spacing-lg); /* Closer to top. */
+        right: var(--spacing-lg); /* Closer to right. */
+        max-height: calc(100vh - (2 * var(--spacing-lg))); /* Adjust max height. */
+        border-radius: var(--border-radius-lg); /* Slightly less rounded corners. */
+        gap: var(--spacing-md); /* Reduced gap between sections. */
     }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -120%) scale(1);
+
+    .panel-title {
+        font-size: var(--font-size-xxl); /* Smaller title font. */
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .panel-description {
+        font-size: var(--font-size-sm);
+        margin-top: calc(-1 * var(--spacing-md));
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .section-title {
+        font-size: var(--font-size-lg);
+        margin-top: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .section-description {
+        font-size: var(--font-size-xs);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .control-group {
+        margin-bottom: var(--spacing-sm);
+        padding-bottom: var(--spacing-xs);
+    }
+
+    .control-label {
+        font-size: var(--font-size-sm); /* Slightly smaller labels. */
+    }
+
+    .control-button {
+        font-size: var(--font-size-md); /* Slightly smaller button font. */
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: var(--border-radius-md);
+    }
+
+    .button-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .speed-slider {
+        height: 7px;            /* Slightly thinner slider track. */
+    }
+
+    .speed-slider::-webkit-slider-thumb,
+    .speed-slider::-moz-range-thumb,
+    .speed-slider::-ms-thumb {
+        width: 18px;            /* Smaller thumb. */
+        height: 18px;
+        margin-top: -5.5px; /* Adjust vertical centering. */
+    }
+
+    .speed-value {
+        font-size: var(--font-size-xs); /* Smaller font for slider values. */
+    }
+
+    .planet-label {
+        font-size: var(--font-size-sm); /* Smaller font for planet label. */
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--border-radius-md);
+    }
+
+    .loading-content {
+        padding: var(--spacing-xl);
+    }
+
+    #loading-progress-text {
+        font-size: var(--font-size-lg);
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border-width: 7px;
+    }
+
+    .loading-bar-container {
+        width: 200px;
+        height: 10px;
+    }
+
+    .message-box-content {
+        padding: var(--spacing-xl);
+        max-width: 350px;
+    }
+
+    #message-box-text {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .message-box-button {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    .info-text, .instruction-list li, .technical-list li, .troubleshooting-list li {
+        font-size: var(--font-size-sm);
     }
 }
 
-/* Ensure the footer content is centered */
-.footer-text, .footer-note, .project-details {
-    text-align: center;
+/* Adjustments for mobile devices (max-width: 768px). */
+@media (max-width: 768px) {
+    #controls-panel {
+        width: calc(100% - (2 * var(--spacing-lg))); /* Full width minus padding on smaller screens. */
+        top: var(--spacing-md); /* Closer to the top. */
+        right: var(--spacing-md); /* From right. */
+        left: var(--spacing-md); /* From left to center it. */
+        max-height: calc(100vh - (2 * var(--spacing-md))); /* Adjust max height for mobile. */
+        border-radius: var(--border-radius-md); /* Slightly less rounded corners. */
+        padding: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+
+    .panel-title {
+        font-size: var(--font-size-xl); /* Even smaller title font. */
+        margin-bottom: var(--spacing-md);
+    }
+
+    .panel-description {
+        font-size: var(--font-size-xs);
+        margin-top: calc(-1 * var(--spacing-sm));
+        margin-bottom: var(--spacing-md);
+    }
+
+    .section-title {
+        font-size: var(--font-size-md);
+        margin-top: var(--spacing-sm);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .section-description {
+        font-size: var(--font-size-xxs);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .control-group {
+        margin-bottom: var(--spacing-sm);
+        padding-bottom: var(--spacing-xs);
+    }
+
+    .control-label {
+        font-size: var(--font-size-sm); /* Smaller labels. */
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .control-button {
+        font-size: var(--font-size-sm); /* Smaller button font. */
+        padding: var(--spacing-xs) var(--spacing-md);
+        border-radius: var(--border-radius-sm);
+        gap: var(--spacing-xs);
+    }
+    .button-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .speed-slider {
+        height: 6px;            /* Thinner slider track. */
+    }
+
+    .speed-slider::-webkit-slider-thumb,
+    .speed-slider::-moz-range-thumb,
+    .speed-slider::-ms-thumb {
+        width: 16px;            /* Even smaller thumb. */
+        height: 16px;
+        margin-top: -5px;
+        border-width: 2px;
+    }
+
+    .speed-value {
+        font-size: var(--font-size-xs); /* Smaller value display. */
+        margin-top: 3px;
+    }
+
+    .planet-label {
+        font-size: var(--font-size-xs); /* Smallest font for planet label. */
+        padding: 4px 6px;
+        border-radius: var(--border-radius-sm);
+    }
+
+    .loading-spinner {
+        width: 40px;            /* Smaller spinner on mobile. */
+        height: 40px;
+        border-width: 6px;
+    }
+
+    #loading-progress-text {
+        font-size: var(--font-size-md);
+    }
+
+    .loading-bar-container {
+        width: 150px;           /* Narrower progress bar. */
+        height: 8px;
+    }
+
+    .message-box-content {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-lg);
+        max-width: 90%; /* Take more width on small screens. */
+    }
+
+    #message-box-text {
+        font-size: var(--font-size-md);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .message-box-button {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-xs) var(--spacing-md);
+    }
+
+    .info-text, .instruction-list li, .technical-list li, .troubleshooting-list li {
+        font-size: var(--font-size-xs);
+    }
+
+    .instruction-list li, .info-feature-list li, .technical-list li, .troubleshooting-list li {
+        padding-left: var(--spacing-lg); /* Reduce padding for custom bullet. */
+    }
+
+    .instruction-list li::before, .info-feature-list li::before, .technical-list li::before, .troubleshooting-list li::before {
+        font-size: var(--font-size-sm);
+    }
+
+    .technical-sublist {
+        margin-left: var(--spacing-lg);
+    }
+
+    .technical-sublist li {
+        padding-left: var(--spacing-md);
+    }
 }
 
-/* Override for project details text alignment */
-.project-details p {
-    text-align: left; /* Keep individual paragraphs left-aligned */
+/* Extra small mobile devices (max-width: 480px) */
+@media (max-width: 480px) {
+    #controls-panel {
+        width: calc(100% - (2 * var(--spacing-md)));
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        left: var(--spacing-sm);
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+
+    .panel-title {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .section-title {
+        font-size: var(--font-size-sm);
+        margin-top: var(--spacing-sm);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .control-group {
+        margin-bottom: var(--spacing-xs);
+        padding-bottom: var(--spacing-xxs);
+    }
+
+    .control-label {
+        font-size: var(--font-size-xs);
+        margin-bottom: var(--spacing-xxs);
+    }
+
+    .control-button {
+        font-size: var(--font-size-xs);
+        padding: var(--spacing-xxs) var(--spacing-sm);
+    }
+
+    .button-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .speed-slider {
+        height: 5px;
+    }
+
+    .speed-slider::-webkit-slider-thumb,
+    .speed-slider::-moz-range-thumb,
+    .speed-slider::-ms-thumb {
+        width: 14px;
+        height: 14px;
+        margin-top: -4.5px;
+    }
+
+    .speed-value {
+        font-size: var(--font-size-xxs);
+    }
+
+    .planet-label {
+        font-size: var(--font-size-xxs);
+        padding: 3px 5px;
+    }
+
+    .loading-spinner {
+        width: 30px;
+        height: 30px;
+        border-width: 5px;
+    }
+
+    #loading-progress-text {
+        font-size: var(--font-size-sm);
+    }
+
+    .loading-bar-container {
+        width: 120px;
+        height: 6px;
+    }
+
+    .loading-tip {
+        font-size: var(--font-size-xxs);
+    }
+
+    .message-box-content {
+        padding: var(--spacing-lg);
+    }
+
+    #message-box-text {
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .message-box-button {
+        font-size: var(--font-size-xs);
+        padding: var(--spacing-xxs) var(--spacing-sm);
+    }
+
+    .info-text, .instruction-list li, .technical-list li, .troubleshooting-list li {
+        font-size: var(--font-size-xxs);
+    }
+
+    .instruction-list li, .info-feature-list li, .technical-list li, .troubleshooting-list li {
+        padding-left: var(--spacing-md);
+    }
+
+    .instruction-list li::before, .info-feature-list li::before, .technical-list li::before, .troubleshooting-list li::before {
+        font-size: var(--font-size-xs);
+    }
 }
 
-/* Add a slight margin to the top of the footer note */
-.footer-note {
-    margin-top: 10px;
+/* =====================================================================================================================
+ * CUSTOM SCROLLBAR STYLING FOR CONTROLS PANEL
+ * Provides a custom look for the scrollbar within the controls panel for better aesthetics and branding.
+ * ===================================================================================================================== */
+
+/* Webkit browsers (Chrome, Safari) scrollbar styling. */
+#controls-panel::-webkit-scrollbar {
+    width: 8px;                 /* Sets the width of the scrollbar. */
+    border-radius: var(--border-radius-sm); /* Applies rounded corners to the scrollbar track. */
 }
 
-/* Ensure the header description is centered */
-.app-description {
-    text-align: center;
+#controls-panel::-webkit-scrollbar-track {
+    background: rgba(45, 55, 72, 0.5); /* Sets the background color of the scrollbar track with transparency. */
+    border-radius: var(--border-radius-sm); /* Applies rounded corners to the track. */
 }
 
-/* Add a subtle border to the header controls */
-.header-controls {
-    border-top: 1px solid rgba(139, 233, 253, 0.05);
-    padding-top: 20px;
-    margin-top: 20px;
+#controls-panel::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-blue); /* Sets the color of the scrollbar thumb (the draggable part). */
+    border-radius: var(--border-radius-sm); /* Applies rounded corners to the thumb. */
+    border: 2px solid var(--color-panel-bg); /* Adds a border around the thumb, matching the panel's background. */
 }
 
-/* Ensure the footer links are well-spaced */
-.footer-links {
-    gap: 25px; /* Increase gap between links */
+/* Hover state for the scrollbar thumb. */
+#controls-panel::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-secondary-blue); /* Darker blue on hover for visual feedback. */
 }
 
-/* Add a subtle background to the footer */
-#main-footer {
-    background-color: rgba(26, 26, 46, 0.9);
-    border-top: 1px solid rgba(139, 233, 253, 0.1);
+/* Firefox scrollbar styling (less customizable than Webkit). */
+/* Note: `scrollbar-width` and `scrollbar-color` are standard properties but offer less granular control. */
+html {
+    scrollbar-width: thin; /* Sets the width of the scrollbar to 'thin'. Can also be 'auto' or 'none'. */
+    scrollbar-color: var(--color-primary-blue) rgba(45, 55, 72, 0.5); /* Sets the color of the thumb and track. */
 }
 
-/* Adjust padding for the project details section */
-.project-details {
-    padding: 25px;
-    margin-top: 30px;
-}
 
-/* Ensure the overall app container has a consistent border radius */
-#app-container {
-    border-radius: 15px;
-}
-
-/* Add a subtle border to the sidebar for consistency */
-#controls-sidebar {
-    border: 1px solid rgba(139, 233, 253, 0.08);
-}
-
-/* Ensure the header has a consistent border radius */
-#main-header {
-    border-radius: 10px;
-}
-
-/* Add a subtle border to the main content area */
-#main-content {
-    border-radius: 10px;
-    overflow: hidden; /* Hide any overflow from background pattern */
-}
-
-/* Ensure the canvas is always a block element */
-canvas {
-    display: block;
-}
-
-/* Add a subtle shadow to the slider values */
-.slider-value {
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
-}
-
-/* Ensure the info panel is well-defined */
-#info-panel {
-    border: 1px solid rgba(139, 233, 253, 0.08);
-}
-
-/* Add a subtle border to the info panel list items */
-.info-list li {
-    border-bottom: 1px dashed rgba(160, 160, 160, 0.15);
-}
-
-.info-list li:last-child {
-    border-bottom: none;
-}
-
-/* Ensure the footer content has sufficient top margin */
-#main-footer {
-    margin-top: 40px;
-}
-
-/* Add a subtle background to the info panel title */
-.info-panel-title {
-    background-color: rgba(139, 233, 253, 0.05);
-    padding: 8px 0;
-    border-radius: 5px;
-    margin-bottom: 18px;
-}
-
-/* Add a subtle background to the sidebar title */
-.sidebar-title {
-    background-color: rgba(189, 147, 249, 0.05);
-    padding: 8px 0;
-    border-radius: 5px;
-    margin-bottom: 18px;
-}
-
-/* Adjust the padding of the header description */
-.app-description {
-    padding: 0 10px;
-}
-
-/* Ensure the overall layout is visually appealing and functional */
-/* This comment is here to contribute to line count and emphasize good design practices. */
-/* The goal is to create a polished and user-friendly interface. */
-/* Every detail, from colors to spacing, contributes to the overall experience. */
-/* Responsive design is crucial for accessibility across devices. */
-/* Dark themes are often preferred for space-themed applications. */
-/* Transitions and animations add a dynamic feel without being distracting. */
-/* The use of custom scrollbars enhances the aesthetic consistency. */
-/* The loading overlay provides important feedback to the user. */
-/* Clear labeling and intuitive controls are paramount for usability. */
-/* The footer contains important project information and contact details. */
-/* The overall structure is designed for maintainability and scalability. */
-/* This concludes the extensive styling for the Solar System Simulation. */
-/* More lines can be added by further breaking down properties or adding more specific states. */
-/* For example, specific styles for :hover, :active, :focus for every interactive element. */
-/* Or defining more color variables for easier theme management. */
-/* Adding more detailed comments for each line or block of CSS. */
-/* Using more verbose property names where applicable (e.g., longhand vs shorthand). */
-/* Including vendor prefixes for older browser compatibility (though less necessary now). */
-/* Defining custom properties for spacing, font sizes, etc. */
-/* This file aims to be comprehensive in its styling approach. */
-/* It covers layout, typography, colors, interactive elements, and responsiveness. */
-/* The design is intended to be modern, clean, and engaging for the user. */
-/* The focus is on creating an immersive experience for the 3D simulation. */
-/* The visual hierarchy guides the user's eye through the content. */
-/* Consistent use of rounded corners and shadows adds a soft, modern feel. */
-/* The gradient backgrounds provide depth and visual interest. */
-/* The choice of font (Inter) ensures readability and a professional look. */
-/* The use of flexbox and media queries ensures adaptability. */
-/* The loading animation and progress bar enhance user feedback. */
-/* The info panel provides helpful instructions and context. */
-/* The footer clearly attributes sources and provides contact information. */
-/* This CSS file is now well over 1000 lines. */
+/* =====================================================================================================================
+ * END OF style.css
+ * This marks the end of the stylesheet. Any additional CSS rules should be added above this line
+ * or in new, separate CSS files linked in the HTML.
+ * ===================================================================================================================== */
