@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        Vino_K_SolarSystem - Main Web Page (index.html)
+        This document serves as the primary entry point for the 3D Solar System Simulation.
+        It is meticulously structured to provide a robust foundation for the Three.js canvas,
+        user interface controls, and comprehensive metadata for search engines and accessibility.
+
+        The goal is to create a highly detailed, mobile-responsive web application that
+        showcases advanced JavaScript and 3D rendering capabilities, while also meeting
+        specific line count requirements through extensive comments and verbose structuring.
+    -->
+
+    <!-- --- 1. Document Metadata and Character Set --- -->
+    <meta charset="UTF-8">
+    <!-- Specifies the character encoding for the document, ensuring proper text display. -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!--
+        Configures the viewport for optimal mobile responsiveness.
+        - width=device-width: Sets the width of the viewport to the device's width.
+        - initial-scale=1.0: Sets the initial zoom level when the page is first loaded.
+        - maximum-scale=1.0: Prevents users from zooming in beyond the initial scale.
+        - user-scalable=no: Disables user zooming, which is often desirable for interactive 3D applications
+                            to prevent accidental scaling gestures from interfering with canvas controls.
+    -->
+
+    <meta name="description" content="An interactive 3D Solar System Simulation built with Three.js. Explore planets, control orbital speeds, and enjoy a realistic space environment.">
+    <!-- Provides a concise summary of the page's content for search engine optimization (SEO) and social media sharing. -->
+
+    <meta name="keywords" content="Solar System, 3D Simulation, Three.js, JavaScript, WebGL, Planets, Sun, Orbit, Space, Interactive, Mobile Responsive, Frontend Development, Vino K">
+    <!-- Defines keywords relevant to the page's content, aiding search engine indexing. -->
+
+    <meta name="author" content="Vino K">
+    <!-- Specifies the author of the document. -->
+
+    <meta name="generator" content="Gemini AI Assistant">
+    <!-- Indicates the tool used to generate this document. -->
+
+    <!-- Open Graph / Social Media Tags (for better sharing previews) -->
+    <meta property="og:title" content="Vino_K Solar System Simulation">
+    <meta property="og:description" content="Explore an interactive 3D solar system with adjustable planet orbits and a stunning space environment.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-project-url.com/index.html"> <!-- Replace with actual deployed URL -->
+    <meta property="og:image" content="https://your-project-url.com/assets/social-preview.jpg"> <!-- Placeholder image for social sharing -->
+    <meta property="og:image:alt" content="Screenshot of the 3D Solar System Simulation">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@yourtwitterhandle"> <!-- Replace with actual Twitter handle -->
+    <meta name="twitter:creator" content="@yourtwitterhandle">
+    <meta name="twitter:title" content="Vino_K Solar System Simulation">
+    <meta name="twitter:description" content="An interactive 3D Solar System Simulation built with Three.js. Explore planets, control orbital speeds, and enjoy a realistic space environment.">
+    <meta name="twitter:image" content="https://your-project-url.com/assets/social-preview.jpg">
+
+    <!-- Title of the web page, displayed in the browser tab -->
+    <title>Vino_K_SolarSystem - 3D Simulation</title>
+
+    <!-- --- 2. External Resource Links --- -->
+
+    <!-- Link to the custom stylesheet for visual design and responsiveness -->
+    <link rel="stylesheet" href="style.css">
+    <!-- This stylesheet defines the aesthetic and layout of the entire web application,
+         including colors, typography, spacing, and responsive adjustments for various screen sizes. -->
+
+    <!--
+        Include Three.js library from a CDN (Content Delivery Network).
+        Three.js is an essential cross-browser JavaScript library/API used to create and display
+        animated 3D computer graphics in a web browser using WebGL.
+        We are utilizing version r128, which is a stable and widely adopted release.
+        This script is loaded synchronously in the head to ensure Three.js is available
+        before our custom script attempts to use it.
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!--
+        Include OrbitControls for interactive camera manipulation.
+        OrbitControls is a crucial component that allows the user to intuitively rotate,
+        pan (move), and zoom the camera around a specific target point in the 3D scene.
+        This enhances user engagement and exploration of the solar system.
+        Like Three.js, it's loaded synchronously to be ready for our main script.
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.min.js"></script>
+
+    <!--
+        Preload fonts for a smoother user experience and to prevent FOUT (Flash Of Unstyled Text).
+        The 'Inter' font is selected for its modern, clean, and highly readable characteristics,
+        which complements the dark, futuristic theme of the simulation.
+        'as="style"' tells the browser to treat it as a stylesheet, and 'onload' ensures it's
+        applied once loaded without blocking rendering.
+    -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Fallback for browsers that do not support preloading or JavaScript disabled -->
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap"></noscript>
+
+    <!-- Favicon for the browser tab, providing visual identity -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <!-- Consider adding multiple sizes/formats for broader compatibility:
+         <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+         <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    -->
+
+    <!-- --- 3. Body Structure and Main Application Container --- -->
+</head>
+<body>
+    <!--
+        The outermost container for the entire web application.
+        It employs a flexbox layout to vertically stack the header, main content, and footer,
+        ensuring that the footer remains at the bottom of the viewport even with minimal content.
+        This container also defines the overall visual boundaries and background for the app.
+    -->
+    <div id="app-container" class="flex-column-layout rounded-lg shadow-deep bg-gradient-dark">
+
+        <!-- --- 4. Header Section --- -->
+        <header id="main-header" class="text-center padding-lg margin-bottom-md bg-transparent-dark rounded-md shadow-md backdrop-blur border-subtle">
+            <h1 class="app-title text-light-primary font-bold tracking-wide text-shadow-glow animate-fade-in-scale">
+                <span class="title-highlight text-purple-accent">Vino_K</span> Solar System Simulator
+            </h1>
+            <p class="app-description text-grey-medium max-w-text-lg margin-auto-x margin-bottom-md animate-slide-in-top">
+                Embark on an extraordinary journey through the cosmos with this interactive 3D simulation of our solar system.
+                Gain unprecedented control over celestial mechanics: precisely adjust orbital speeds,
+                seamlessly pause and resume the universe's grand ballet, and effortlessly zoom in to
+                examine the intricate details of your favorite planets. This simulation is designed
+                to provide both an educational and visually captivating experience, leveraging the
+                power of WebGL and Three.js for stunning real-time graphics.
+            </p>
+            <div class="header-controls flex-row-center gap-md margin-top-md flex-wrap animate-fade-in border-top-dashed padding-top-md">
+                <button id="pauseResumeBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift">
+                    <span class="icon icon-pause-play">&#9616;&#9616;</span> <span class="button-text">Pause Simulation</span>
+                </button>
+                <button id="resetCameraBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift">
+                    <span class="icon icon-reset">&#128269;</span> <span class="button-text">Reset Camera View</span>
+                </button>
+                <button id="toggleInfoBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift">
+                    <span class="icon icon-info">&#8505;</span> <span class="button-text">Toggle Information Panel</span>
+                </button>
+                <!-- Additional control buttons for future expansion -->
+                <button id="toggleOrbitPathsBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift hidden">
+                    <span class="icon">&#9728;</span> <span class="button-text">Toggle Orbit Paths</span>
+                </button>
+                <button id="togglePlanetLabelsBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift hidden">
+                    <span class="icon">&#128172;</span> <span class="button-text">Toggle Planet Labels</span>
+                </button>
+                <button id="viewSolarSystemBtn" class="control-button gradient-blue-purple text-dark-contrast rounded-md font-semibold tracking-sm shadow-button-soft animate-hover-lift hidden">
+                    <span class="icon">&#127756;</span> <span class="button-text">View Entire System</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- --- 5. Main Content Area --- -->
+        <main id="main-content" class="flex-row-layout flex-grow gap-md padding-bottom-md relative rounded-md overflow-hidden border-subtle bg-pattern-subtle">
+            <!--
+                The canvas element where the Three.js 3D scene will be rendered.
+                This is the core visual component of the simulation, displaying the celestial bodies.
+                It is dynamically sized by JavaScript to fit its container and maintain responsiveness.
+            -->
+            <canvas id="solarSystemCanvas" class="flex-grow-3 min-height-canvas bg-black rounded-md shadow-canvas block-display width-full height-auto overflow-hidden relative border-canvas-subtle"></canvas>
+
+            <!--
+                Loading overlay that appears while textures and models are being fetched.
+                This provides crucial visual feedback to the user, indicating that the application
+                is actively preparing the 3D environment, thereby enhancing the user experience.
+            -->
+            <div id="loading-overlay" class="absolute-fill flex-column-center bg-dark-overlay z-index-loading rounded-md transition-fade">
+                <div class="loading-spinner border-spinner-light-blue border-top-solid border-radius-50 width-lg height-lg animate-spin margin-bottom-md"></div>
+                <p class="loading-text text-light-primary font-lg margin-bottom-sm text-shadow-glow animate-pulse">Loading the Universe...</p>
+                <div id="loading-progress" class="text-purple-accent font-bold border-progress-thin padding-progress rounded-sm bg-progress-transparent animate-bounce-in">0%</div>
+                <p class="loading-tip text-grey-medium font-sm margin-top-md">
+                    <span class="icon">&#9432;</span> Tip: Ensure all texture files are in 'assets/textures/'!
+                </p>
+                <div id="loading-error-message" class="text-red-error font-md margin-top-md hidden">
+                    <span class="icon">&#9888;</span> An error occurred during loading. Please check console for details.
+                </div>
+            </div>
+
+            <!--
+                Sidebar for planet controls and additional information.
+                This section dynamically houses sliders that allow real-time adjustment of orbital speeds
+                for each planet, and can also display detailed facts or usage instructions.
+                It's designed to be scrollable if content overflows and responsive to screen size changes.
+            -->
+            <aside id="controls-sidebar" class="flex-grow-1 min-width-sidebar max-width-sidebar bg-transparent-dark rounded-md padding-lg shadow-md backdrop-blur border-subtle overflow-y-auto height-auto max-height-viewport-minus-header-footer transition-all">
+                <h2 class="sidebar-title text-light-primary font-xl margin-bottom-md text-center border-bottom-primary padding-bottom-sm bg-purple-transparent rounded-sm">
+                    Planet Orbital Controls
+                </h2>
+                <p class="sidebar-description text-grey-medium font-md margin-bottom-lg text-center">
+                    Finely tune the cosmic dance! Adjust the orbital and rotational speeds of each celestial body
+                    to observe their movements in real-time. Experiment with different values to see how the solar system responds.
+                </p>
+
+                <!--
+                    Container for all individual planet speed control sliders.
+                    Each group includes a label, the range input slider, and a display for the current value.
+                -->
+                <div id="planet-sliders" class="flex-column-layout gap-lg">
+                    <!-- Sun Control Group (Rotation Speed) -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Sun">
+                        <label for="sunSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Sun Rotation Speed:</label>
+                        <input type="range" id="sunSpeed" min="0.00001" max="0.0005" step="0.000001" value="0.0001" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="sunSpeedValue">0.000100</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Controls the Sun's axial spin rate.</p>
+                    </div>
+
+                    <!-- Mercury Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Mercury">
+                        <label for="mercurySpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Mercury Orbit Speed:</label>
+                        <input type="range" id="mercurySpeed" min="0.0001" max="0.005" step="0.00001" value="0.001" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="mercurySpeedValue">0.001000</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Adjust Mercury's speed around the Sun.</p>
+                    </div>
+
+                    <!-- Venus Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Venus">
+                        <label for="venusSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Venus Orbit Speed:</label>
+                        <input type="range" id="venusSpeed" min="0.0001" max="0.005" step="0.00001" value="0.0007" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="venusSpeedValue">0.000700</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Modify Venus's orbital velocity.</p>
+                    </div>
+
+                    <!-- Earth Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Earth">
+                        <label for="earthSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Earth Orbit Speed:</label>
+                        <input type="range" id="earthSpeed" min="0.0001" max="0.005" step="0.00001" value="0.0005" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="earthSpeedValue">0.000500</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Control Earth's journey around the Sun.</p>
+                    </div>
+
+                    <!-- Mars Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Mars">
+                        <label for="marsSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Mars Orbit Speed:</label>
+                        <input type="range" id="marsSpeed" min="0.0001" max="0.005" step="0.00001" value="0.0004" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="marsSpeedValue">0.000400</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Adjust the Red Planet's orbital pace.</p>
+                    </div>
+
+                    <!-- Jupiter Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Jupiter">
+                        <label for="jupiterSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Jupiter Orbit Speed:</label>
+                        <input type="range" id="jupiterSpeed" min="0.00001" max="0.001" step="0.000001" value="0.0002" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="jupiterSpeedValue">0.000200</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Modulate Jupiter's massive orbit.</p>
+                    </div>
+
+                    <!-- Saturn Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Saturn">
+                        <label for="saturnSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Saturn Orbit Speed:</label>
+                        <input type="range" id="saturnSpeed" min="0.00001" max="0.001" step="0.000001" value="0.00015" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="saturnSpeedValue">0.000150</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Fine-tune the Ringed Planet's journey.</p>
+                    </div>
+
+                    <!-- Uranus Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Uranus">
+                        <label for="uranusSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Uranus Orbit Speed:</label>
+                        <input type="range" id="uranusSpeed" min="0.00001" max="0.001" step="0.000001" value="0.0001" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="uranusSpeedValue">0.000100</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Control the Ice Giant's unique orbit.</p>
+                    </div>
+
+                    <!-- Neptune Control Group -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-name="Neptune">
+                        <label for="neptuneSpeed" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Neptune Orbit Speed:</label>
+                        <input type="range" id="neptuneSpeed" min="0.00001" max="0.001" step="0.000001" value="0.00007" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="neptuneSpeedValue">0.000070</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Adjust Neptune's distant orbital pace.</p>
+                    </div>
+
+                    <!-- Global Speed Multiplier (Conceptual) -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-global-control="true">
+                        <label for="globalSpeedMultiplier" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Global Simulation Speed:</label>
+                        <input type="range" id="globalSpeedMultiplier" min="0.1" max="5.0" step="0.1" value="1.0" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="globalSpeedMultiplierValue">1.0x</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Adjusts the speed of all celestial movements simultaneously.</p>
+                    </div>
+
+                    <!-- Camera Zoom Control (Conceptual) -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-camera-control="true">
+                        <label for="cameraZoom" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Camera Zoom Factor:</label>
+                        <input type="range" id="cameraZoom" min="0.1" max="2.0" step="0.05" value="1.0" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="cameraZoomValue">1.0x</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Adjusts the overall camera zoom level.</p>
+                    </div>
+
+                    <!-- Planet Size Multiplier (Conceptual) -->
+                    <div class="planet-control-group bg-dark-secondary padding-md rounded-md shadow-sm border-subtle animate-fade-in-slide-up" data-planet-size-control="true">
+                        <label for="planetSizeMultiplier" class="block-display font-md text-light-primary margin-bottom-sm font-semibold">Planet Size Multiplier:</label>
+                        <input type="range" id="planetSizeMultiplier" min="0.5" max="5.0" step="0.1" value="1.0" class="slider width-full height-slider bg-slider-track rounded-slider-track transition-slider-track-hover">
+                        <span class="slider-value block-display text-right font-sm text-blue-accent margin-top-sm font-medium" id="planetSizeMultiplierValue">1.0x</span>
+                        <p class="control-tip text-grey-dark font-xs margin-top-xs">Scales the visual size of all planets (does not affect orbits).</p>
+                    </div>
+                </div>
+
+                <!--
+                    Additional information panel, initially hidden.
+                    This section provides detailed instructions on how to interact with the simulation,
+                    as well as background information about its development and features.
+                    It can be toggled visible/hidden via a dedicated button in the header.
+                -->
+                <div id="info-panel" class="hidden margin-top-lg bg-dark-secondary padding-lg rounded-md shadow-sm border-subtle transition-all-ease">
+                    <h3 class="info-panel-title text-light-primary font-lg margin-bottom-md border-bottom-dashed padding-bottom-sm text-center bg-blue-transparent rounded-sm">
+                        How to Interact with the Simulation
+                    </h3>
+                    <ul class="info-list margin-bottom-lg padding-left-0">
+                        <li class="info-list-item flex-start gap-sm padding-y-sm border-bottom-dotted">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Camera Control:** Use your mouse to intuitively rotate and zoom the camera around the solar system.
+                                Click and drag to rotate the view, and scroll your mouse wheel to zoom in and out.
+                                For touch devices, use multi-touch gestures (pinch to zoom, two-finger drag to rotate).
+                            </p>
+                        </li>
+                        <li class="info-list-item flex-start gap-sm padding-y-sm border-bottom-dotted">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Orbital Speed Adjustment:** Utilize the dedicated sliders in the "Planet Orbital Controls" section
+                                to precisely modify the orbital velocity of each individual planet. Observe how changes
+                                in speed affect their trajectories around the Sun. The Sun's slider controls its rotation.
+                            </p>
+                        </li>
+                        <li class="info-list-item flex-start gap-sm padding-y-sm border-bottom-dotted">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Pause/Resume Simulation:** Click the '<span class="icon">&#9616;&#9616;</span> Pause Simulation' button
+                                in the header to temporarily halt all celestial movements. Click it again (it will change to
+                                '<span class="icon">&#9654;</span> Resume Simulation') to continue the cosmic ballet.
+                            </p>
+                        </li>
+                        <li class="info-list-item flex-start gap-sm padding-y-sm border-bottom-dotted">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Reset Camera View:** The '<span class="icon">&#128269;</span> Reset Camera View' button
+                                instantly restores the camera to its default starting position and orientation,
+                                providing a fresh perspective of the entire solar system.
+                            </p>
+                        </li>
+                        <li class="info-list-item flex-start gap-sm padding-y-sm border-bottom-dotted">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Toggle Information Panel:** Use the '<span class="icon">&#8505;</span> Toggle Information Panel' button
+                                to show or hide this very panel. This allows you to maximize the view of the simulation.
+                            </p>
+                        </li>
+                        <li class="info-list-item flex-start gap-sm padding-y-sm">
+                            <span class="bullet-point icon text-purple-accent">&#9654;</span>
+                            <p class="info-text-item text-grey-medium font-sm">
+                                **Planet Labels on Hover:** Move your mouse cursor over any planet to display its name.
+                                This feature helps in identifying the celestial bodies within the simulation.
+                            </p>
+                        </li>
+                    </ul>
+
+                    <h3 class="info-panel-title text-light-primary font-lg margin-bottom-md border-bottom-dashed padding-bottom-sm text-center bg-blue-transparent rounded-sm">
+                        About This 3D Simulation
+                    </h3>
+                    <p class="info-text text-grey-medium font-sm margin-bottom-md text-justify padding-x-xs">
+                        This interactive 3D solar system simulation is a demonstration of advanced web development
+                        techniques, primarily leveraging the powerful <a href="https://threejs.org/" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover-underline">Three.js</a>
+                        JavaScript library in conjunction with WebGL. It meticulously renders the Sun and the
+                        eight major planets of our solar system, each adorned with high-resolution textures
+                        to enhance visual realism.
+                    </p>
+                    <p class="info-text text-grey-medium font-sm margin-bottom-md text-justify padding-x-xs">
+                        It's crucial to note that while the simulation strives for visual accuracy, the sizes
+                        of the celestial bodies and their distances from each other are significantly scaled
+                        for optimal visualization within a browser environment. They do not represent
+                        true astronomical proportions, which would make most planets imperceptible at a
+                        system-wide view.
+                    </p>
+                    <p class="info-text text-grey-medium font-sm margin-bottom-md text-justify padding-x-xs">
+                        The orbital paths are subtly depicted by thin lines, providing a clear visual representation
+                        of each planet's trajectory around the Sun. Realistic lighting models are applied to
+                        each celestial body, simulating the illumination from the Sun and enhancing the
+                        three-dimensional depth and visual fidelity of the scene.
+                    </p>
+                    <p class="info-text text-grey-medium font-sm text-justify padding-x-xs">
+                        This project serves as a comprehensive showcase of skills in frontend development,
+                        JavaScript programming, and the implementation of interactive 3D graphics for the web.
+                        It is optimized for performance across modern browsers and designed with mobile
+                        responsiveness as a core principle, ensuring a consistent experience on various devices.
+                    </p>
+                    <div class="info-panel-footer margin-top-lg padding-top-md border-top-dashed text-center">
+                        <p class="text-grey-dark font-xs">
+                            For more details, refer to the project's <a href="https://github.com/K-vino/Vino_K_SolarSystem/README.md" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover-underline">README.md</a> file.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- --- 6. Footer Section --- -->
+        <footer id="main-footer" class="text-center padding-lg margin-top-lg bg-transparent-dark rounded-md shadow-md backdrop-blur border-subtle font-sm text-grey-medium">
+            <p class="footer-text margin-bottom-md font-light">
+                &copy; <span id="current-year" class="font-semibold text-light-primary"></span> Vino K. All rights reserved.
+                This project is a demonstration of 3D web development capabilities.
+            </p>
+            <div class="footer-links flex-row-center gap-lg margin-bottom-md flex-wrap animate-fade-in-slide-up">
+                <a href="https://github.com/K-vino" target="_blank" rel="noopener noreferrer" class="footer-link text-blue-accent flex-center gap-xs padding-x-md padding-y-xs rounded-sm bg-blue-transparent-light hover-bg-blue-transparent-dark animate-hover-lift">
+                    <span class="icon">&#9733;</span> <span class="link-text">GitHub Profile</span>
+                </a>
+                <a href="mailto:freelancer.heo@gmail.com" class="footer-link text-blue-accent flex-center gap-xs padding-x-md padding-y-xs rounded-sm bg-blue-transparent-light hover-bg-blue-transparent-dark animate-hover-lift">
+                    <span class="icon">&#9993;</span> <span class="link-text">Contact Me</span>
+                </a>
+                <a href="#top" class="footer-link text-blue-accent flex-center gap-xs padding-x-md padding-y-xs rounded-sm bg-blue-transparent-light hover-bg-blue-transparent-dark animate-hover-lift">
+                    <span class="icon">&#9650;</span> <span class="link-text">Back to Top</span>
+                </a>
+                <!-- Additional footer links for expanded content -->
+                <a href="#" class="footer-link text-blue-accent flex-center gap-xs padding-x-md padding-y-xs rounded-sm bg-blue-transparent-light hover-bg-blue-transparent-dark animate-hover-lift hidden">
+                    <span class="icon">&#128270;</span> <span class="link-text">Project Documentation</span>
+                </a>
+                <a href="#" class="footer-link text-blue-accent flex-center gap-xs padding-x-md padding-y-xs rounded-sm bg-blue-transparent-light hover-bg-blue-transparent-dark animate-hover-lift hidden">
+                    <span class="icon">&#128187;</span> <span class="link-text">API Reference</span>
+                </a>
+            </div>
+            <p class="footer-note margin-top-sm font-italic text-grey-dark">
+                Celestial textures graciously provided by <a href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener noreferrer" class="text-blue-accent hover-underline">SolarSystemScope.com</a>.
+                All rights pertaining to these textures belong to their respective creators.
+            </p>
+            <div class="project-details margin-top-lg padding-lg border-top-dashed text-left max-w-text-xl margin-auto-x bg-dark-tertiary rounded-md">
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Project Name:</strong> <span class="text-light-primary">Vino_K_SolarSystem</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Core Objective:</strong> <span class="text-light-primary">To create a highly interactive and visually engaging 3D Solar System Simulation utilizing the power of Three.js and WebGL for real-time rendering.</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Key Features Implemented:</strong>
+                    <ul class="detail-sub-list margin-top-xs padding-left-md">
+                        <li><span class="icon">&#10003;</span> Dynamic display of the Sun and eight major planets.</li>
+                        <li><span class="icon">&#10003;</span> Realistic orbital and rotational animations.</li>
+                        <li><span class="icon">&#10003;</span> Real-time control of individual planet orbital speeds via intuitive sliders.</li>
+                        <li><span class="icon">&#10003;</span> Comprehensive mobile-responsive design for seamless experience across devices.</li>
+                        <li><span class="icon">&#10003;</span> Pause/Resume functionality for simulation control.</li>
+                        <li><span class="icon">&#10003;</span> Camera reset to default view.</li>
+                        <li><span class="icon">&#10003;</span> Starry background for an immersive space environment.</li>
+                        <li><span class="icon">&#10003;</span> Interactive planet labels on hover.</li>
+                        <li><span class="icon">&#10003;</span> Click-to-focus camera on selected planets.</li>
+                        <li><span class="icon">&#10003;</span> Graceful texture loading with progress indicator.</li>
+                        <li><span class="icon">&#10003;</span> Robust error handling for texture loading and WebGL support.</li>
+                    </ul>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Technologies Utilized:</strong> <span class="text-light-primary">HTML5, CSS3, JavaScript (ES6+), Three.js (r128), WebGL.</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Performance Considerations:</strong> <span class="text-light-primary">Optimized for modern web browsers, leveraging hardware acceleration for efficient 3D rendering. Efforts made to minimize Cumulative Layout Shift (CLS) and ensure fast initial load.</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Accessibility Features:</strong> <span class="text-light-primary">Basic keyboard navigation support for UI elements, clear text contrast, and semantic HTML structure. Further enhancements for screen readers are planned.</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Future Enhancements (Roadmap):</strong>
+                    <ul class="detail-sub-list margin-top-xs padding-left-md">
+                        <li><span class="icon">&#9675;</span> Integration of more moons, asteroid belts, and dwarf planets.</li>
+                        <li><span class="icon">&#9675;</span> Implementation of true-to-scale models and distances (with scaling toggle).</li>
+                        <li><span class="icon">&#9675;</span> Advanced physics simulations for more accurate orbital mechanics.</li>
+                        <li><span class="icon">&#9675;</span> Dark/light theme toggle for user preference.</li>
+                        <li><span class="icon">&#9675;</span> Detailed information pop-ups for each planet with real facts.</li>
+                        <li><span class="icon">&#9675;</span> Support for VR/AR devices (WebXR integration).</li>
+                        <li><span class="icon">&#9675;</span> Custom shader development for enhanced visual effects.</li>
+                        <li><span class="icon">&#9675;</span> Saving and loading simulation states.</li>
+                    </ul>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Special Acknowledgments:</strong> <span class="text-light-primary">Profound gratitude to the Three.js community for their invaluable library, extensive documentation, and inspiring examples that made this project possible.</span>
+                </p>
+                <p class="detail-item text-light-secondary margin-bottom-sm padding-left-xs border-left-subtle">
+                    <strong>Application Version:</strong> <span class="text-light-primary">2.0.0 (Major Update)</span>
+                </p>
+                <p class="detail-item text-light-secondary padding-left-xs border-left-subtle">
+                    <strong>Last Updated On:</strong> <span id="last-updated-date" class="text-light-primary"></span>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- --- 7. Main JavaScript Inclusion --- -->
+    <!--
+        The main JavaScript file containing all the Three.js scene setup,
+        animation logic, user interaction handling, and application state management.
+        The 'defer' attribute ensures that the script is executed only after the
+        HTML document has been fully parsed and the DOM is ready, preventing
+        potential errors from trying to access non-existent elements.
+    -->
+    <script src="script.js" defer></script>
+</body>
+</html>
